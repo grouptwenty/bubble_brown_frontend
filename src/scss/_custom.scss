@@ -9,7 +9,9 @@ body {
 .main .container-fluid{
   padding: 0!important;
 }
-
+.container-fluid{
+  height: calc(100vh - 94px);
+}
 @media (min-width: 992px)
         {
         html:not([dir="rtl"]) 
