@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // import { Button, Table, Card, Pagination, PaginationLink, PaginationItem, CardHeader, Col, Row, Container } from 'reactstrap';
-import { Col, Row, Container, Card, CardImg, CardText, CardBody, CardTitle, Button } from 'reactstrap';
+// import { Col, Row, Container, Card, CardImg, CardText, CardBody, CardTitle, Button, Label } from 'reactstrap';
+import { Col, Row, CardHeader, Card, CardImg, CardText, CardBody, CardTitle, Button, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
 import swal from 'sweetalert';
@@ -23,6 +24,8 @@ class HomeView extends Component {
         this.state = {
             data: [],
             menutype_list: [],
+            bill_order: [],
+            order_list: [],
             refresh: false
 
         };
@@ -33,6 +36,10 @@ class HomeView extends Component {
         this.deleteItem = this.deleteItem.bind(this);
         this.rendertotal = this.rendertotal.bind(this);
         this.sumtotal = this.sumtotal.bind(this);
+        // this.renderBill = this.renderBill.bind(this);
+        this.onBillDetail = this.onBillDetail.bind(this);
+        this.renderOrderList = this.renderOrderList.bind(this);
+        this.toggle = this.toggle.bind(this);
     }
 
 
@@ -52,21 +59,11 @@ class HomeView extends Component {
             menu_list: menu_list.data
         })
 
-        // var menutype_list = await menutype_model.getMenuTypeBy()
-        // console.log("menutype_list", menutype_list);
-        // this.setState({
-        //     menutype_list: menutype_list.data
-        // })
-        // var menulist = await menumodel.getMenuBy()
-        // console.log("menulist", menulist);
-        // this.setState({
-        //     menulist: menulist.data
-        // })
-        // var menu_list = await menumodel.getMenuByCode('MNT01')
-        // console.log("menulistbycode", menu_list);
-        // this.setState({
-        //     menu_list: menu_list.data
-        // })
+        var bill_order = await order_model.getOrderBy()
+        this.setState({
+            bill_order: bill_order.data,
+        })
+
     }
 
     async getMenuByCode(code) {
@@ -97,45 +94,31 @@ class HomeView extends Component {
         }
     }
 
-    // renderMenuType() {
-    //     console.log("5555", this.state.menutype_list);
-    //     if (this.state.menutype_list != undefined) {
-    //         console.log("5555", this.state.menutype_list);
 
-    //         var menu_list = []
-    //         for (let i = 0; i < this.state.menutype_list.length; i++) {
-    //             menu_list.push(
-    //                 <Col style={{ borderWidth: 1, borderStyle: 'solid', height: 50, textAlign: 'center' }}>
-    //                     <div>
-    //                         <label onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_code)}>
-    //                             {this.state.menutype_list[i].menu_type_name}
-    //                         </label>
-    //                     </div>
-    //                 </Col>
+    renderOrderList() {
+        var Bill_order_list = []
+        for (let i = 0; i < this.state.order_list.length; i++) {
+            Bill_order_list.push(
 
-    //             )
-    //         }
-    //         return menu_list;
-    //     }
-    // }
+                <Row>
+                    <Col lg="4">
+                        <Label className="text_head" > {this.state.order_list[i].order_list_name} </Label>
+                    </Col>
+                    <Col lg="4" style={{ textAlign: 'center' }}>
+                        <Label className="text_head" > {this.state.order_list[i].order_list_qty} </Label>
 
-    // renderMenu() {
-    //     console.log("5555", this.state.menulist);
-    //     if (this.state.menulist != undefined) {
-    //         console.log("5555", this.state.menulist);
+                    </Col>
+                    <Col lg="4" style={{ textAlign: 'center' }}>
+                        <Label className="text_head" > {this.state.order_list[i].order_list_price_sum_qty} </Label>
 
-    //         var menulist = []
-    //         for (let i = 0; i < this.state.menulist.length; i++) {
-    //             menulist.push(
-    //                 <Col>
-    //                     <div> {this.state.menulist[i].menu_name} </div>
-    //                 </Col>
+                    </Col>
 
-    //             )
-    //         }
+                </Row>
 
-    //     }
-    // }
+            )
+        }
+        return Bill_order_list;
+    }
 
     addItem(data) {
 
@@ -241,21 +224,6 @@ class HomeView extends Component {
         }
     }
 
-    // renderMenuby() {
-    //     console.log("5555", this.state.menu_list);
-    //     if (this.state.menu_list != undefined) {
-    //         console.log("5555", this.state.menu_list);
-    //         var menulist = []
-    //         for (let i = 0; i < this.state.menu_list.length; i++) {
-    //             menulist.push(
-    //                 <Col>
-    //                     <div> {this.state.menu_list[i].menu_name} </div>
-    //                 </Col>
-    //             )
-    //         }
-    //         return menulist;
-    //     }
-    // }
 
     async insertOrder() {
 
@@ -350,7 +318,25 @@ class HomeView extends Component {
 
     }
 
+    toggle() {
+        this.setState(prevState => ({
+            modal: !prevState.modal
+        }));
+    }
+
+    async onBillDetail(order_code) {
+        var order_list = await order_list_model.getOrderListBy(order_code)
+        this.setState({
+            order_list: order_list.data,
+            order_code_list: order_code
+        })
+
+        this.toggle()
+
+    }
+
     render() {
+        const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
         // const renderMenuType = this.renderMenuType
         // if (this.state.menutype_list != undefined) {
         //     console.log("5555", this.state.menutype_list);
@@ -407,58 +393,44 @@ class HomeView extends Component {
 
                         {this.rendercart()}
                         {this.rendertotal()}
-                        {this.state.cart != undefined && this.state.cart != "" ? <Row ><div style={{ paddingTop: '30px', textAlign: 'end' }}><Button onClick={this.insertOrder.bind(this)}><label>สั่งอาหาร</label></Button></div></Row> : ''}
-
+                        {this.state.cart != undefined && this.state.cart != "" ?
+                            <Row >
+                                <div style={{ paddingTop: '30px', textAlign: 'end' }}>
+                                    <Button onClick={this.insertOrder.bind(this)}><label>สั่งอาหาร</label></Button>
+                                </div>
+                                <div style={{ paddingTop: '30px', textAlign: 'end' }}>
+                                    <Button onClick={this.onBillDetail.bind(this, this.state.order_list.order_code)}><label>ดูบิล</label></Button>
+                                </div>
+                            </Row>
+                            : ''}
 
                     </Col>
                 </Row>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
+                    <ModalHeader toggle={this.toggle} close={closeBtn}>Order : {this.state.order_code_list}</ModalHeader>
+                    <ModalBody >
 
+                        <Row>
+                            <Col lg="4">
+                                <Label  > รายการ </Label>
+                            </Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label > จำนวน</Label>
+
+                            </Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label > ราคา </Label>
+
+                            </Col>
+
+                        </Row>
+                        {this.renderOrderList()}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.toggle} style={{ width: 100, height: 40 }}>OK</Button>
+                    </ModalFooter>
+                </Modal>
             </div>
-
-            /* <Row style={{ minWidth: '100%', paddingTop: '2%', paddingBottom: '2%', marginLeft: '2%' }}>
-                <Col lg="8">
-
-                </Col>
-                <Col lg="2" style={{ textAlign: 'right', marginTop: 5 }}>
-                    <div> โซน A - โต๊ะ 1 </div>
-                </Col>
-                <Col lg="2" style={{ borderLeftWidth: 1, borderLeftStyle: 'solid', paddingLeft: '2%', paddingRight: '2%' }}>
-                    <NavLink exact to={'dashboard'} style={{ width: '100%' }}>
-                        <button class="btn btn-primary">เรียกพนักงาน</button>
-                    </NavLink>
-                </Col>
-
-
-            </Row>
-            <Row style={{ minWidth: '100%' }}>
-                {this.renderMenuType()}
-            </Row>
-
-            <Row style={{ minWidth: '100%', height: '100%', minHeight: '68vh' }}>
-                <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
-                    <Row style={{ minWidth: '100%' }}>
-                        {this.renderMenuby()}
-                    </Row>
-                </Col>
-                <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
-                    <Row>
-                        <div style={{}}> รายการอาหาร</div>
-                    </Row>
-                    <Row >
-                        <div style={{ position: 'relative' }}>
-                            <div>
-                                <NavLink exact to={'dashboard'} style={{ width: '100%' }}>
-                                    <button class="btn btn-primary">สั่งอาหาร</button>
-                                </NavLink>
-                            </div>
-
-                        </div>
-                    </Row>
-
-
-                </Col>
-            </Row>
-        </div > */
 
         )
     }
