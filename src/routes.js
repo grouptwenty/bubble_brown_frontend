@@ -2,6 +2,7 @@ import React from 'react';
 
 // const HomeAdmin = React.lazy(() => import('./views/Admin'));
 const User = React.lazy(() => import('./views/User'));
+const Booking = React.lazy(() => import('./views/Booking'));
 // const Entrepreneur = React.lazy(() => import('./views/Entrepreneur'));
 // const Laundry = React.lazy(() => import('./views/Laundry'));
 // const Repair = React.lazy(() => import('./views/Repair'));
@@ -24,6 +25,7 @@ const User = React.lazy(() => import('./views/User'));
 const routes = [
     // { path: '/admin/', name: 'Admin', component: HomeAdmin },
     { path: '/user/', name: 'User', component: User },
+    { path: '/booking/', name: 'Booking', component: Booking },
     // { path: '/entrepreneur/', name: 'Entrepreneur', component: Entrepreneur },
     // { path: '/laundry/', name: 'Laundry', component: Laundry },
     // { path: '/repair/', name: 'Repair', component: Repair },

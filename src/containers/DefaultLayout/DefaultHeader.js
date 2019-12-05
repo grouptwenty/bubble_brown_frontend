@@ -44,7 +44,7 @@ class DefaultHeader extends Component {
             </NavLink>
           </Col>
           <Col md="4">
-            <NavLink to="/dashboard" >
+            <NavLink to="/Booking" >
               <strong class="title-menu">จองโต๊ะ</strong>
             </NavLink>
           </Col>
