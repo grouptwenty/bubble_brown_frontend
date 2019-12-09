@@ -99,7 +99,6 @@ class HomeView extends Component {
         var Bill_order_list = []
         for (let i = 0; i < this.state.order_list.length; i++) {
             Bill_order_list.push(
-
                 <Row>
                     <Col lg="4">
                         <Label className="text_head" > {this.state.order_list[i].order_list_name} </Label>
@@ -114,7 +113,6 @@ class HomeView extends Component {
                     </Col>
 
                 </Row>
-
             )
         }
         return Bill_order_list;
@@ -185,12 +183,15 @@ class HomeView extends Component {
             var cart_list = []
             for (let i = 0; i < this.state.cart.length; i++) {
                 cart_list.push(
-                    <Row >
-                        <Col lg="4" style={{ paddingTop: '5px' }}><div>{this.state.cart[i].name}</div></Col>
-                        <Col lg="4" style={{ paddingTop: '5px', textAlign: 'center' }}><div>{this.state.cart[i].price}</div></Col>
+                    <div>
+                        <Row >
+                            <Col lg="4" style={{ paddingTop: '5px' }}><div>{this.state.cart[i].name}</div></Col>
+                            <Col lg="4" style={{ paddingTop: '5px', textAlign: 'center' }}><div>{this.state.cart[i].price}</div></Col>
 
-                        <Col lg="4" style={{ paddingTop: '5px', textAlign: 'center' }}><Button onClick={this.deleteItemButton.bind(this, this.state.cart[i])}> - </Button>{this.state.cart[i].count}<Button onClick={this.addItemButton.bind(this, this.state.cart[i])}> + </Button></Col>
-                    </Row>
+                            <Col lg="4" style={{ paddingTop: '5px', textAlign: 'center' }}><Button onClick={this.deleteItemButton.bind(this, this.state.cart[i])}> - </Button>{this.state.cart[i].count}<Button onClick={this.addItemButton.bind(this, this.state.cart[i])}> + </Button></Col>
+                        </Row>
+                        <hr />
+                    </div>
                 )
             }
             return cart_list;
@@ -225,10 +226,44 @@ class HomeView extends Component {
     }
 
 
+    async updateOrder(order_code) {
+        const date_now = new Date();
+        var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
+        var order = {
+            'table_id': '01',
+            'customer_code': 'CM001',
+            'order_date': toDay,
+            'order_code': order_code,
+            'order_total_price': this.sumtotal()
+        }
+
+        const result1 = await order_model.updateOrder(order)
+
+        const result2 = await order_list_model.deleteByCode(order)
+
+        for (var key in this.state.cart) {
+            var order_list = {
+                order_code: order_code,
+                menu_code: this.state.cart[key].code,
+                order_list_qty: this.state.cart[key].count,
+                order_list_name: this.state.cart[key].name,
+                order_list_price_qty: this.state.cart[key].price,
+                order_list_price_sum_qty: this.state.cart[key].count * this.state.cart[key].price,
+                order_list_price_sum: this.sumtotal()
+            }
+            const arr = await order_list_model.insertOrderList(order_list)
+            if (order_list != undefined) {
+                swal({
+                    title: "Good job!",
+                    text: "Add user Ok",
+                    icon: "success",
+                    button: "Close",
+                });
+            }
+        }
+    }
+
     async insertOrder() {
-
-        var order = []
-
 
         const max_code = await order_model.getOrderMaxCode()//province data
         var order_code = 'OD' + max_code.data.order_code_max
@@ -236,19 +271,19 @@ class HomeView extends Component {
 
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
-        const data = new FormData();
-        order.push({
+        var order = {
             'table_id': '01',
             'customer_code': 'CM001',
             'order_date': toDay,
             'order_code': order_code,
             'order_total_price': this.sumtotal()
+        }
 
-
-        })
         console.log(order);
 
         const res = await order_model.insertOrder(order)
+        console.log("222222222", res);
+
         for (var key in this.state.cart) {
             // this.state.cart[key].code
             // this.state.cart[key].count
@@ -264,17 +299,19 @@ class HomeView extends Component {
                 order_list_price_sum: this.sumtotal()
             }
             const arr = await order_list_model.insertOrderList(order_list)
-            // if (order_list != undefined) {
-            //     swal({
-            //         title: "Good job!",
-            //         text: "Add user Ok",
-            //         icon: "success",
-            //         button: "Close",
-            //     });
-            //     this.props.history.push('/menu/')
-            // }
+            if (order_list != undefined) {
+                swal({
+                    title: "Good job!",
+                    text: "Add user Ok",
+                    icon: "success",
+                    button: "Close",
+                });
+                // this.props.history.push('/menu/')
+            }
         }
-
+        this.setState({
+            order_code: order_code
+        })
     }
     rendertotal() {
         if (this.state.cart != undefined) {
@@ -330,44 +367,11 @@ class HomeView extends Component {
             order_list: order_list.data,
             order_code_list: order_code
         })
-
         this.toggle()
-
     }
 
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
-        // const renderMenuType = this.renderMenuType
-        // if (this.state.menutype_list != undefined) {
-        //     console.log("5555", this.state.menutype_list);
-
-        //     var menu_list = []
-        //     for (let i = 0; i < this.state.menutype_list.length; i++) {
-        //         menu_list.push(
-        //             <Col style={{ borderWidth: 1, borderStyle: 'solid', height: 50, textAlign: 'center' }}>
-        //                 <label onClick={() => { this.renderMenuby(this.state.menutype_list.menu_type_code); }}>
-        //                     <div style={{ marginTop: '2.5%' }}> {this.state.menutype_list[i].menu_type_name} </div>
-        //                 </label>
-        //             </Col>
-        //         )
-        //     }
-        // }
-
-        // if (this.state.menu_list != undefined) {
-        //     console.log("5555", this.state.menu_list);
-
-        //     var menulist = []
-        //     for (let i = 0; i < this.state.menu_list.length; i++) {
-        //         menulist.push(
-        //             <Col style={{ borderWidth: 1, borderStyle: 'solid', height: 50, textAlign: 'center' }}>
-        //                 <NavLink exact to={'dashboard'} style={{ width: '100%' }}>
-        //                     <div style={{ marginTop: '2.5%' }}> {this.state.menu_list[i].menu_name} </div>
-        //                 </NavLink>
-        //                 {/* <div style={{ marginTop: '2.5%' }}> {this.state.menulist[i].menu_name} </div> */}
-        //             </Col>
-        //         )
-        //     }
-        // }
         return (
 
             // <div>
@@ -392,39 +396,64 @@ class HomeView extends Component {
                         </Row>
 
                         {this.rendercart()}
-                        {this.rendertotal()}
-                        {this.state.cart != undefined && this.state.cart != "" ?
-                            <Row >
-                                <div style={{ paddingTop: '30px', textAlign: 'end' }}>
-                                    <Button onClick={this.insertOrder.bind(this)}><label>สั่งอาหาร</label></Button>
-                                </div>
-                                <div style={{ paddingTop: '30px', textAlign: 'end' }}>
-                                    <Button onClick={this.onBillDetail.bind(this, this.state.order_list.order_code)}><label>ดูบิล</label></Button>
-                                </div>
-                            </Row>
-                            : ''}
+                        <Row style={{ textAlign: 'right', justifyContent: 'end' }}>
+                            <Col>
+                                {this.rendertotal()}
+                                {this.state.cart != undefined && this.state.cart != "" ?
+                                    <Row style={{ textAlign: 'right' }}>
+                                        <Col lg='12'>
+                                            <div>
+                                                {this.state.order_code != undefined ?
+                                                    <div>
+                                                        <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
+                                                        <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+                                                    </div>
+                                                    : <Button onClick={this.insertOrder.bind(this)}><label>สั่งอาหาร</label></Button>
+                                                }
+                                                {/* <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button> */}
+                                            </div>
+                                        </Col>
+
+                                    </Row>
+                                    : ''}
+                            </Col>
+                        </Row>
+
 
                     </Col>
                 </Row>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
                     <ModalHeader toggle={this.toggle} close={closeBtn}>Order : {this.state.order_code_list}</ModalHeader>
                     <ModalBody >
-
                         <Row>
-                            <Col lg="4">
-                                <Label  > รายการ </Label>
-                            </Col>
-                            <Col lg="4" style={{ textAlign: 'center' }}>
-                                <Label > จำนวน</Label>
+                            <Col>
+                                <Row>
+                                    <Col lg="4">
+                                        <Label> รายการ </Label>
+                                    </Col>
+                                    <Col lg="4" style={{ textAlign: 'center' }}>
+                                        <Label> จำนวน </Label>
+                                    </Col>
+                                    <Col lg="4" style={{ textAlign: 'center' }}>
+                                        <Label> ราคา </Label>
+                                    </Col>
 
-                            </Col>
-                            <Col lg="4" style={{ textAlign: 'center' }}>
-                                <Label > ราคา </Label>
+                                </Row>
 
                             </Col>
 
                         </Row>
+
                         {this.renderOrderList()}
+                        <Row>
+                            <Col lg="4"></Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label>ราคารวม</Label>
+                            </Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label className="text_head"> {this.state.sum_price} </Label>
+                            </Col>
+                        </Row >
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this.toggle} style={{ width: 100, height: 40 }}>OK</Button>
