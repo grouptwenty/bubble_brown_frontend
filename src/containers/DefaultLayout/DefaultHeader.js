@@ -49,7 +49,7 @@ class DefaultHeader extends Component {
             </NavLink>
           </Col>
           <Col md="4">
-            <NavLink to="/dashboard" >
+            <NavLink to="/Promotion" >
               <strong class="title-menu">โปรโมชั่น</strong>
             </NavLink>
           </Col>
