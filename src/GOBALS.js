@@ -11,17 +11,17 @@ export default {
 	// URL_IMG: 'http://18.140.54.123:3003/',
 
 	
-	// URL: 'http://192.168.0.119:3004',
-	// // IO: 'http://localhost:3002',
-	// URL_UPLOAD_IMG: 'http://192.168.0.119:3005/upload-image/',
-	// URL_DELETE_IMG: 'http://192.168.0.119:3005/delete-image/',
-	// URL_IMG: 'http://192.168.0.119:3006/',
+	URL: 'http://192.168.0.118:3004',
+	// IO: 'http://localhost:3002',
+	URL_UPLOAD_IMG: 'http://192.168.0.118:3005/upload-image/',
+	URL_DELETE_IMG: 'http://192.168.0.118:3005/delete-image/',
+	URL_IMG: 'http://192.168.0.118:3006/',
 
-// 	URL: 'http://192.168.1.112:3004',
-// 	// IO: 'http://localhost:3002',
-// 	URL_UPLOAD_IMG: 'http://192.168.1.112:3005/upload-image/',
-// 	URL_DELETE_IMG: 'http://192.168.1.112:3005/delete-image/',
-// 	URL_IMG: 'http://192.168.1.112:3006/',
+	// URL: 'http://192.168.1.112:3004',
+	// // IO: 'http://localhost:3002',
+	// URL_UPLOAD_IMG: 'http://192.168.1.112:3005/upload-image/',
+	// URL_DELETE_IMG: 'http://192.168.1.112:3005/delete-image/',
+	// URL_IMG: 'http://192.168.1.112:3006/',
 // }
 
 	// URL: 'http://192.168.0.117:3004',
@@ -30,11 +30,11 @@ export default {
 	// URL_DELETE_IMG: 'http://192.168.0.117:3005/delete-image/',
 	// URL_IMG: 'http://192.168.0.117:3006/',
 
-	URL: 'http://192.168.2.54:3004',
-	// IO: 'http://localhost:3002',
-	URL_UPLOAD_IMG: 'http://192.168.2.54:3005/upload-image/',
-	URL_DELETE_IMG: 'http://192.168.2.54:3005/delete-image/',
-	URL_IMG: 'http://192.168.2.54:3006/',
+	// URL: 'http://192.168.2.54:3004',
+	// // IO: 'http://localhost:3002',
+	// URL_UPLOAD_IMG: 'http://192.168.2.54:3005/upload-image/',
+	// URL_DELETE_IMG: 'http://192.168.2.54:3005/delete-image/',
+	// URL_IMG: 'http://192.168.2.54:3006/',
 
 	// URL: 'http://10.1.42.117:3004',
 	// // IO: 'http://localhost:3002',
