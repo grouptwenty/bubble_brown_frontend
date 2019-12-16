@@ -53,6 +53,7 @@
     "font-awesome": "^4.7.0",
     "fuse.js": "^3.2.0",
     "match-sorter": "1.8.1",
+    "md5": "^2.2.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "node-sass": "^4.11.0",
@@ -81,7 +82,6 @@
     "react-toastify": "^5.2.1",
     "reactstrap": "^7.1.0",
     "redux": "3.7.2",
-    "md5": "^2.2.1",
     "simple-line-icons": "^2.4.1",
     "socket.io-client": "^2.2.0",
     "sweetalert": "^2.1.2"
