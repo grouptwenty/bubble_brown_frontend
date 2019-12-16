@@ -7,16 +7,22 @@ import { NavLink, Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import GOBALS from '../../GOBALS'
 import ImgDefault from '../../assets/img/default-user.png'
+import QrReader from 'react-qr-scanner'
 
 import MenuModel from '../../models/MenuModel'
 import MenuTypeModel from '../../models/MenuTypeModel'
 import OrderModel from '../../models/OrderModel'
 import OrderListModel from '../../models/OrderListModel'
+import TableModel from '../../models/TableModel'
+import GPSCalculateModel from '../../models/GPSCalculateModel'
+import { geolocated } from "react-geolocated";
 
 const menu_model = new MenuModel
 const menutype_model = new MenuTypeModel
 const order_model = new OrderModel
 const order_list_model = new OrderListModel
+const table_model = new TableModel
+const gps_model = new GPSCalculateModel
 var cart = [];
 class HomeView extends Component {
     constructor(props) {
@@ -26,8 +32,9 @@ class HomeView extends Component {
             menutype_list: [],
             bill_order: [],
             order_list: [],
-            refresh: false
-
+            refresh: false,
+            delay: 100,
+            result: 'No result',
         };
         this.renderMenuby = this.renderMenuby.bind(this);
         this.renderMenuType = this.renderMenuType.bind(this);
@@ -40,10 +47,42 @@ class HomeView extends Component {
         this.onBillDetail = this.onBillDetail.bind(this);
         this.renderOrderList = this.renderOrderList.bind(this);
         this.toggle = this.toggle.bind(this);
+        this.toggle1 = this.toggle1.bind(this);
+        this.handleScan = this.handleScan.bind(this)
+        this.insertOrder = this.insertOrder.bind(this)
+        this.close = this.close.bind(this)
+        this.getMyLocation = this.getMyLocation.bind(this)
+        this.showQR = this.showQR.bind(this)
     }
 
+    async handleScan(data) {
+        this.setState({
+            result: data,
+        })
+        console.log(data);
+        if (data != null) {
+            var table_code = { table_code: data }
+            var table_list = await table_model.getTableByCode(table_code)
 
+            var table_list_data = table_list.data
+            console.log("table_list_data", table_list_data.length);
+            if (table_list_data != "") {
+                console.log("table_list.data.length.zone_id", table_list.zone_id);
+
+                this.insertOrder()
+
+            }
+        }
+    }
+    handleError(err) {
+        console.error(err)
+    }
+    getMyLocation() {
+
+
+    }
     async componentDidMount() {
+
         var menutype_list = await menutype_model.getMenuTypeBy()
         this.setState({
             menutype_list: menutype_list.data,
@@ -64,11 +103,13 @@ class HomeView extends Component {
             bill_order: bill_order.data,
         })
 
+
+
     }
 
     async getMenuByCode(code) {
         var menu_list = await menu_model.getMenuByCode(code)
-        console.log("menulistbycode", menu_list);
+        // console.log("menulistbycode", menu_list);
         this.setState({
             menu_list: menu_list.data
         })
@@ -158,7 +199,7 @@ class HomeView extends Component {
             count: count
         });
 
-        console.log("cart", cart);
+        // console.log("cart", cart);
         this.setState({
             cart: cart
         })
@@ -200,7 +241,7 @@ class HomeView extends Component {
 
     renderMenuby() {
         if (this.state.menu_list != undefined) {
-            console.log("5555", this.state.menu_list);
+            // console.log("5555", this.state.menu_list);
             var menulist = []
             for (let i = 0; i < this.state.menu_list.length; i++) {
                 menulist.push(
@@ -232,7 +273,7 @@ class HomeView extends Component {
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
         var order_service = document.getElementById('order_service').value
-        console.log("order_service", order_service);
+        // console.log("order_service", order_service);
 
         var order = {
             'table_code': '01',
@@ -268,12 +309,66 @@ class HomeView extends Component {
         }
     }
 
-    async insertOrder() {
+    async showQR(my_location) {
+        var coord = {
+            lat_start: my_location.latitude,
+            lon_start: my_location.longitude,
+            lat_end: 14.999548299999999,
+            lon_end: 102.10612169999999
+        }
+        var gps = await gps_model.getGPS(coord)
+        console.log(gps);
+        if (gps.distance <= 200) {
+            swal({
+                title: "คุณต้องการสั่งอาหารใช่หรือไม่ ?",
+                // text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        this.toggle1()
+                    }
+                });
+        } else {
+            swal({
+                title: "คุณไม่ได้อยู่ในพื้นที่ที่กำหนด",
+                // text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                button: "Close",
+            })
+        }
+    }
+    async showScanQR() {
+        const location = window.navigator && window.navigator.geolocation
+       
+        if (location) {
+            location.getCurrentPosition((position) => {
+                var my_location= position.coords
+                this.showQR(position.coords)
 
+            }, (error) => {
+                swal({
+                    title: "อุปกรณ์ไม่รองรับ GPS",
+                    // text: "Once deleted, you will not be able to recover this imaginary file!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+            })
+
+
+        }
+
+
+
+    }
+    async insertOrder() {
         var order = []
         const max_code = await order_model.getOrderMaxCode()//province data
         var order_code = 'OD' + max_code.data.order_code_max
-        console.log(max_code);
+        // console.log(max_code);
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
@@ -309,17 +404,20 @@ class HomeView extends Component {
             }
             const arr = await order_list_model.insertOrderList(order_list)
             if (order_list != undefined) {
+                this.close();
                 swal({
                     title: "สั่งอาหารเรียบร้อย",
                     text: "โปรดรออาหารสักครู่...",
                     icon: "success",
                     button: "Close",
                 });
+
             }
         }
         this.setState({
             order_code: order_code
         })
+
     }
     rendertotal() {
         if (this.state.cart != undefined) {
@@ -327,8 +425,8 @@ class HomeView extends Component {
             var sum = 0;
             for (let i = 0; i < this.state.cart.length; i++) {
                 sum += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
-                console.log("..........", this.state.cart[i].count);
-                console.log("..1........", this.state.cart[i].price);
+                // console.log("..........", this.state.cart[i].count);
+                // console.log("..1........", this.state.cart[i].price);
             }
             order_total.push(
                 <Row>
@@ -340,7 +438,7 @@ class HomeView extends Component {
                     </Col>
                 </Row>
             )
-            console.log("3333333333", sum);
+            // console.log("3333333333", sum);
             // this.setState({
             //     sum_price: sum
             // })
@@ -354,7 +452,7 @@ class HomeView extends Component {
             for (let i = 0; i < this.state.cart.length; i++) {
                 sum += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
             }
-            console.log("3333333333", sum);
+            // console.log("3333333333", sum);
             this.setState({
                 sum_price: sum
             })
@@ -369,6 +467,16 @@ class HomeView extends Component {
         }));
     }
 
+    toggle1() {
+        this.setState(prevState => ({
+            modal1: !prevState.modal
+        }));
+    }
+    close() {
+        this.setState({
+            modal1: false
+        })
+    }
     async onBillDetail(order_code) {
         var order_list = await order_list_model.getOrderListBy(order_code)
         this.setState({
@@ -380,10 +488,13 @@ class HomeView extends Component {
 
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
+
+        const previewStyle = {
+            height: '100%',
+            width: '100%',
+        }
+
         return (
-
-            // <div>
-
             <div>
 
                 <Row style={{ minWidth: '100%', height: '100%', minHeight: '80vh' }}>
@@ -425,7 +536,7 @@ class HomeView extends Component {
                                                         <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
                                                         <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
                                                     </div>
-                                                    : <Button onClick={this.insertOrder.bind(this)}><label>สั่งอาหาร</label></Button>
+                                                    : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
                                                 }
                                                 {/* <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button> */}
                                             </div>
@@ -474,6 +585,24 @@ class HomeView extends Component {
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this.toggle} style={{ width: 100, height: 40 }}>OK</Button>
+                    </ModalFooter>
+                </Modal>
+
+
+                <Modal isOpen={this.state.modal1} toggle={this.toggle1} size="lg">
+                    <ModalBody >
+                        <div>
+                            <QrReader
+                                delay={this.state.delay}
+                                style={previewStyle}
+                                onError={this.handleError}
+                                onScan={this.handleScan}
+                            />
+                            <p>{this.state.result}</p>
+                        </div>
+                    </ModalBody >
+                    <ModalFooter>
+                        <Button color="cancel" onClick={this.close} style={{ width: 100, height: 40 }}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
             </div>
