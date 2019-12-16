@@ -10,6 +10,7 @@ import 'react-day-picker/lib/style.css';
 import moment from 'moment'
 
 
+
 import BookingModel from '../../models/BookingModel'
 const booking_model = new BookingModel
 var today = new Date();
@@ -54,9 +55,9 @@ class BookingView extends Component {
         event.preventDefault();
         const form = event.target;
         const data = new FormData(form);
-        // var amount = document.getElementById('booking_amount').value
+        var amount = document.getElementById('booking_amount').value
         var book = {
-            table_amount: 2,
+            table_amount: amount,
             booking_date: this.state.change_date
         }
         var checkbook = await booking_model.checkBook(book)
