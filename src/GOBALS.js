@@ -11,11 +11,11 @@ export default {
 	// URL_IMG: 'http://18.140.54.123:3003/',
 
 	
-	URL: 'http://192.168.0.118:3004',
+	URL: 'http://192.168.0.111:3004',
 	// IO: 'http://localhost:3002',
-	URL_UPLOAD_IMG: 'http://192.168.0.118:3005/upload-image/',
-	URL_DELETE_IMG: 'http://192.168.0.118:3005/delete-image/',
-	URL_IMG: 'http://192.168.0.118:3006/',
+	URL_UPLOAD_IMG: 'http://192.168.0.111:3005/upload-image/',
+	URL_DELETE_IMG: 'http://192.168.0.111:3005/delete-image/',
+	URL_IMG: 'http://192.168.0.111:3006/',
 
 	// URL: 'http://192.168.1.112:3004',
 	// // IO: 'http://localhost:3002',
