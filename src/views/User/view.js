@@ -230,16 +230,15 @@ class HomeView extends Component {
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         var order = {
-            'table_id': '01',
+            'table_code': '01',
             'customer_code': 'CM001',
             'order_date': toDay,
             'order_code': order_code,
             'order_total_price': this.sumtotal()
         }
 
-        const result1 = await order_model.updateOrder(order)
-
-        const result2 = await order_list_model.deleteByCode(order)
+        const result1 = await order_model.updateOrderByCode(order)
+        const result2 = await order_list_model.deleteOrderListByCode(order)
 
         for (var key in this.state.cart) {
             var order_list = {
@@ -272,7 +271,7 @@ class HomeView extends Component {
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         var order = {
-            'table_id': '01',
+            'table_code': '01',
             'customer_code': 'CM001',
             'order_date': toDay,
             'order_code': order_code,

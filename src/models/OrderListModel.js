@@ -92,8 +92,8 @@ export default class OrderListModel {
             });
     }
 
-    async deleteByCode(data) {
-        return fetch(GOBALS.URL + '/order_list/deleteByCode', {
+    async deleteOrderListByCode(data) {
+        return fetch(GOBALS.URL + '/order_list/deleteOrderListByCode', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
