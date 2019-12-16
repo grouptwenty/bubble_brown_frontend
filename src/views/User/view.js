@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import { Button, Table, Card, Pagination, PaginationLink, PaginationItem, CardHeader, Col, Row, Container } from 'reactstrap';
 // import { Col, Row, Container, Card, CardImg, CardText, CardBody, CardTitle, Button, Label } from 'reactstrap';
-import { Col, Row, CardHeader, Card, CardImg, CardText, CardBody, CardTitle, Button, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Col, Row, CardHeader, Card, CardImg, CardText, CardBody, FormGroup, CardTitle, Button, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
 import swal from 'sweetalert';
@@ -227,22 +227,28 @@ class HomeView extends Component {
 
 
     async updateOrder(order_code) {
+        var order = []
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
+        const data = new FormData();
+        var order_service = document.getElementById('order_service').value
+        console.log("order_service", order_service);
+
         var order = {
             'table_code': '01',
+            'order_service': order_service,
             'customer_code': 'CM001',
             'order_date': toDay,
-            'order_code': order_code,
+            'order_code': this.state.order_code,
             'order_total_price': this.sumtotal()
         }
 
         const result1 = await order_model.updateOrderByCode(order)
-        const result2 = await order_list_model.deleteOrderListByCode(order)
+        const result2 = await order_list_model.deleteOrderListByCode(this.state.order_code)
 
         for (var key in this.state.cart) {
             var order_list = {
-                order_code: order_code,
+                order_code: this.state.order_code,
                 menu_code: this.state.cart[key].code,
                 order_list_qty: this.state.cart[key].count,
                 order_list_name: this.state.cart[key].name,
@@ -264,21 +270,25 @@ class HomeView extends Component {
 
     async insertOrder() {
 
+        var order = []
         const max_code = await order_model.getOrderMaxCode()//province data
         var order_code = 'OD' + max_code.data.order_code_max
         console.log(max_code);
-
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
+        const data = new FormData();
+        var order_service = document.getElementById('order_service').value
         var order = {
             'table_code': '01',
+            'order_service': order_service,
             'customer_code': 'CM001',
             'order_date': toDay,
             'order_code': order_code,
             'order_total_price': this.sumtotal()
         }
 
-        console.log(order);
+
+        console.log("order", order);
 
         const res = await order_model.insertOrder(order)
         console.log("222222222", res);
@@ -300,12 +310,11 @@ class HomeView extends Component {
             const arr = await order_list_model.insertOrderList(order_list)
             if (order_list != undefined) {
                 swal({
-                    title: "Good job!",
-                    text: "Add user Ok",
+                    title: "สั่งอาหารเรียบร้อย",
+                    text: "โปรดรออาหารสักครู่...",
                     icon: "success",
                     button: "Close",
                 });
-                // this.props.history.push('/menu/')
             }
         }
         this.setState({
@@ -388,7 +397,16 @@ class HomeView extends Component {
                         </Row>
                     </Col>
                     <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
-
+                        <Row style={{ padding: '2%' }}>
+                            <Col lg="3">
+                                <FormGroup>
+                                    <Input type="select" id="order_service" name="order_service" class="form-control" >
+                                        <option value="ทานที่ร้าน">ทานที่ร้าน</option>
+                                        <option value="สั่งกลับบ้าน">สั่งกลับบ้าน</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                        </Row>
                         <Row >
                             <div style={{ paddingTop: '10px', paddingLeft: '10px', paddingBottom: '30px' }}> รายการอาหาร</div>
 
