@@ -68,8 +68,8 @@ export default class OrderModel {
             });
     }
 
-    async updateOrder(data) {
-        return fetch(GOBALS.URL + '/order/updateOrder', {
+    async updateOrderByCode(data) {
+        return fetch(GOBALS.URL + '/order/updateOrderByCode', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

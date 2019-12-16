@@ -89,7 +89,6 @@ class PromotionView extends Component {
                         <Button>รายละเอียด</Button>
                     </Card>
                 </Col>
-
             )
         }
 
