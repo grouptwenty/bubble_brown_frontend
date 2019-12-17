@@ -63,14 +63,14 @@ class HomeView extends Component {
         if (data != null) {
             var table_code = { table_code: data }
             var table_list = await table_model.getTableByCode(table_code)
-
+            var insert = false
             var table_list_data = table_list.data
-            console.log("table_list_data", table_list_data.length);
-            if (table_list_data != "") {
-                console.log("table_list.data.length.zone_id", table_list.zone_id);
+            // console.log("table_list_data", table_list_data.length);
+            if (table_list_data != "" && !insert) {
+                // console.log("table_list.data.length.zone_id", table_list.zone_id);
 
                 this.insertOrder()
-
+                insert = true
             }
         }
     }
@@ -276,7 +276,7 @@ class HomeView extends Component {
         // console.log("order_service", order_service);
 
         var order = {
-            'table_code': '01',
+            // 'table_code': this.state.result,
             'order_service': order_service,
             'customer_code': 'CM001',
             'order_date': toDay,
@@ -285,7 +285,8 @@ class HomeView extends Component {
         }
 
         const result1 = await order_model.updateOrderByCode(order)
-        const result2 = await order_list_model.deleteOrderListByCode(this.state.order_code)
+        const result2 = await order_list_model.deleteOrderListByCode({ 'order_code': this.state.order_code })
+        console.log("result2", result2);
 
         for (var key in this.state.cart) {
             var order_list = {
@@ -311,8 +312,10 @@ class HomeView extends Component {
 
     async showQR(my_location) {
         var coord = {
-            lat_start: my_location.latitude,
-            lon_start: my_location.longitude,
+            lat_start: 14.999548299999999,
+            lon_start: 102.10612169999999,
+            // lat_start: my_location.latitude,
+            // lon_start: my_location.longitude,
             lat_end: 14.999548299999999,
             lon_end: 102.10612169999999
         }
@@ -342,10 +345,10 @@ class HomeView extends Component {
     }
     async showScanQR() {
         const location = window.navigator && window.navigator.geolocation
-       
+
         if (location) {
             location.getCurrentPosition((position) => {
-                var my_location= position.coords
+                var my_location = position.coords
                 this.showQR(position.coords)
 
             }, (error) => {
@@ -374,7 +377,7 @@ class HomeView extends Component {
         const data = new FormData();
         var order_service = document.getElementById('order_service').value
         var order = {
-            'table_code': '01',
+            'table_code': this.state.result,
             'order_service': order_service,
             'customer_code': 'CM001',
             'order_date': toDay,
