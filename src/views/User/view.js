@@ -15,6 +15,7 @@ import OrderModel from '../../models/OrderModel'
 import OrderListModel from '../../models/OrderListModel'
 import TableModel from '../../models/TableModel'
 import GPSCalculateModel from '../../models/GPSCalculateModel'
+import PromotionModel from '../../models/PromotionModel'
 import { geolocated } from "react-geolocated";
 
 const menu_model = new MenuModel
@@ -23,6 +24,7 @@ const order_model = new OrderModel
 const order_list_model = new OrderListModel
 const table_model = new TableModel
 const gps_model = new GPSCalculateModel
+const promotion_model = new PromotionModel
 var cart = [];
 class HomeView extends Component {
     constructor(props) {
@@ -33,7 +35,7 @@ class HomeView extends Component {
             bill_order: [],
             order_list: [],
             refresh: false,
-            delay: 100,
+            delay: 400,
             result: 'No result',
         };
         this.renderMenuby = this.renderMenuby.bind(this);
@@ -67,6 +69,7 @@ class HomeView extends Component {
             var table_list_data = table_list.data
             // console.log("table_list_data", table_list_data.length);
             if (table_list_data != "" && !insert) {
+                this.close();
                 // console.log("table_list.data.length.zone_id", table_list.zone_id);
 
                 this.insertOrder()
@@ -101,6 +104,11 @@ class HomeView extends Component {
         var bill_order = await order_model.getOrderBy()
         this.setState({
             bill_order: bill_order.data,
+        })
+
+        var promotion_list = await promotion_model.getPromotionBy()
+        this.setState({
+            promotion_list: promotion_list.data,
         })
 
 
@@ -265,7 +273,15 @@ class HomeView extends Component {
             return menulist;
         }
     }
+    async getPromotion() {
+        var discount_code = document.getElementById("discount_code").value
+        const promotion = await promotion_model.getPromotionByCode({ "discount_code": discount_code })
+        console.log(promotion.data);
 
+        this.setState({
+            promotion: promotion.data
+        })
+    }
 
     async updateOrder(order_code) {
         var order = []
@@ -274,6 +290,8 @@ class HomeView extends Component {
         const data = new FormData();
         var order_service = document.getElementById('order_service').value
         // console.log("order_service", order_service);
+        var total_sum = this.sumtotal();
+        console.log("total_sum :", total_sum.sum_price);
 
         var order = {
             // 'table_code': this.state.result,
@@ -281,7 +299,8 @@ class HomeView extends Component {
             'customer_code': 'CM001',
             'order_date': toDay,
             'order_code': this.state.order_code,
-            'order_total_price': this.sumtotal()
+            'order_total_price': total_sum.total,
+            'amount': total_sum.sum_price
         }
 
         const result1 = await order_model.updateOrderByCode(order)
@@ -296,7 +315,7 @@ class HomeView extends Component {
                 order_list_name: this.state.cart[key].name,
                 order_list_price_qty: this.state.cart[key].price,
                 order_list_price_sum_qty: this.state.cart[key].count * this.state.cart[key].price,
-                order_list_price_sum: this.sumtotal()
+                order_list_price_sum: total_sum.sum_price
             }
             const arr = await order_list_model.insertOrderList(order_list)
             if (order_list != undefined) {
@@ -360,12 +379,7 @@ class HomeView extends Component {
                     dangerMode: true,
                 })
             })
-
-
         }
-
-
-
     }
     async insertOrder() {
         var order = []
@@ -376,13 +390,15 @@ class HomeView extends Component {
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
         var order_service = document.getElementById('order_service').value
+        var total_sum = this.sumtotal()
         var order = {
             'table_code': this.state.result,
             'order_service': order_service,
             'customer_code': 'CM001',
             'order_date': toDay,
             'order_code': order_code,
-            'order_total_price': this.sumtotal()
+            'order_total_price': total_sum.total,
+            'amount': total_sum.sum_price
         }
 
 
@@ -403,7 +419,7 @@ class HomeView extends Component {
                 order_list_name: this.state.cart[key].name,
                 order_list_price_qty: this.state.cart[key].price,
                 order_list_price_sum_qty: this.state.cart[key].count * this.state.cart[key].price,
-                order_list_price_sum: this.sumtotal()
+                order_list_price_sum: total_sum.sum_price
             }
             const arr = await order_list_model.insertOrderList(order_list)
             if (order_list != undefined) {
@@ -422,6 +438,25 @@ class HomeView extends Component {
         })
 
     }
+
+    renderpromotion() {
+        if (this.state.promotion != undefined) {
+            var promotion_list = []
+            promotion_list.push(
+                <Col>
+                    <div>
+                        <label style={{ margin: '15px' }}>
+                            {this.state.promotion.promotion_detail}
+                        </label>
+                    </div>
+                </Col>
+            )
+
+        }
+        return promotion_list;
+    }
+
+
     rendertotal() {
         if (this.state.cart != undefined) {
             var order_total = []
@@ -430,6 +465,18 @@ class HomeView extends Component {
                 sum += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
                 // console.log("..........", this.state.cart[i].count);
                 // console.log("..1........", this.state.cart[i].price);
+            }
+            if (this.state.promotion != undefined) {
+                if (this.state.promotion.discount_percent != "") {
+                    var discount_price = (sum * this.state.promotion.discount_percent) / 100
+                    sum = sum - discount_price
+                    // console.log("sum_discount_percent", sum);
+                }
+                if (this.state.promotion.discount_price != "") {
+                    var discount_price = sum - this.state.promotion.discount_price
+                    sum = discount_price
+                    // console.log("sum_discount_price", sum);
+                }
             }
             order_total.push(
                 <Row>
@@ -452,17 +499,52 @@ class HomeView extends Component {
     sumtotal() {
         if (this.state.cart != undefined) {
             var sum = 0;
+            var total = 0;
             for (let i = 0; i < this.state.cart.length; i++) {
                 sum += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
+                total += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
+            }
+            if (this.state.promotion != undefined) {
+                if (this.state.promotion.discount_percent != "") {
+                    var discount_price = (sum * this.state.promotion.discount_percent) / 100
+                    sum = sum - discount_price
+                    // console.log("sum_discount_percent", sum);
+                }
+                if (this.state.promotion.discount_price != "") {
+                    var discount_price = sum - this.state.promotion.discount_price
+                    sum = discount_price
+                    // console.log("sum_discount_price", sum);
+                }
             }
             // console.log("3333333333", sum);
-            this.setState({
-                sum_price: sum
-            })
-            return sum;
-        }
 
+            var total_sum = {
+                sum_price: sum,
+                total: total
+            }
+            // console.log("3333333333", this.state.sum_price);
+            // console.log("5555555555", this.state.total);
+            return total_sum;
+        }
     }
+
+    // totalprice() {
+    //     var total = 0;
+    //     if (this.state.promotion != undefined) {
+    //         if (this.state.promotion.discount_percent != "") {
+    //             var totalprice = (this.state.sum_price * 100) / (100 - this.state.promotion.discount_percent)
+    //             total = totalprice
+    //             console.log("totalprice :", total);
+    //         }
+    //         // if (this.state.promotion.discount_price != "") {
+    //         //     var totalprice = sum - this.state.promotion.discount_price
+    //         //     sum = discount_price
+    //         //     // console.log("sum_discount_price", sum);
+    //         // }
+    //     }
+    //     return total;
+
+    // }
 
     toggle() {
         this.setState(prevState => ({
@@ -527,6 +609,15 @@ class HomeView extends Component {
                         </Row>
 
                         {this.rendercart()}
+                        <Row>
+                            <Col lg="2">
+                                <div style={{ paddingTop: '10px', paddingLeft: '10px', paddingBottom: '30px' }}>CODE </div>
+                            </Col>
+                            <Col lg="4">
+                                <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
+                            </Col>
+                        </Row>
+                        {this.renderpromotion()}
                         <Row style={{ textAlign: 'right', justifyContent: 'end' }}>
                             <Col>
                                 {this.rendertotal()}
