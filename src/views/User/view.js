@@ -254,11 +254,6 @@ class HomeView extends Component {
             for (let i = 0; i < this.state.menu_list.length; i++) {
                 menulist.push(
                     <Col lg="4">
-                        {/* <ClickNHold
-                            time={0.5}
-                            onStart={this.start}
-                            onClickNHold={this.clickNHold}
-                            onEnd={this.end} > */}
                         <Card onClick={this.addItem.bind(this, this.state.menu_list[i])}>
                             {/* <CardImg top width="100%" src="/logo_bubblebrown.png" alt="Card image cap" /> */}
                             <CardBody>
@@ -408,10 +403,6 @@ class HomeView extends Component {
         console.log("222222222", res);
 
         for (var key in this.state.cart) {
-            // this.state.cart[key].code
-            // this.state.cart[key].count
-            // this.state.cart[key].name
-            // this.state.cart[key].price
             var order_list = {
                 order_code: order_code,
                 menu_code: this.state.cart[key].code,
@@ -527,24 +518,6 @@ class HomeView extends Component {
             return total_sum;
         }
     }
-
-    // totalprice() {
-    //     var total = 0;
-    //     if (this.state.promotion != undefined) {
-    //         if (this.state.promotion.discount_percent != "") {
-    //             var totalprice = (this.state.sum_price * 100) / (100 - this.state.promotion.discount_percent)
-    //             total = totalprice
-    //             console.log("totalprice :", total);
-    //         }
-    //         // if (this.state.promotion.discount_price != "") {
-    //         //     var totalprice = sum - this.state.promotion.discount_price
-    //         //     sum = discount_price
-    //         //     // console.log("sum_discount_price", sum);
-    //         // }
-    //     }
-    //     return total;
-
-    // }
 
     toggle() {
         this.setState(prevState => ({
@@ -700,7 +673,6 @@ class HomeView extends Component {
                     </ModalFooter>
                 </Modal>
             </div>
-
         )
     }
 }
