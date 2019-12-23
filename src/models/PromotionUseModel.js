@@ -25,50 +25,48 @@ export default class PromotionUseModel {
             });
     }
 
-    // async getPromotionByCode(data) {
-    //     return fetch(GOBALS.URL + '/promotion/getPromotionByCode', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({ menu_type_code: data })
-    //     }).then((response) => response.json())
-    //         .then((responseJson) => {
+    async insertPromotionUse(data) {
+        return fetch(GOBALS.URL + '/promotion_use/insertPromotionUse', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
 
-    //             return responseJson;
-    //         }).catch((error) => {
-    //             return {
-    //                 data: [],
-    //                 error: error,
-    //                 query_result: false,
-    //                 server_result: false
-    //             };
-    //         });
-    //     }
-    // async insertBooking(data) {
-    //     return fetch(GOBALS.URL + '/booking/insertBooking', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(data)
-    //     }).then((response) => response.json())
-    //         .then((responseJson) => {
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result:false
+                };
+            });
+    }
 
-    //             return responseJson;
-    //         }).catch((error) => {
-    //             return {
-    //                 data: [],
-    //                 error: error,
-    //                 query_result: false,
-    //                 server_result: false
-    //             };
-    //         });
-    // }
+    async updatePromotionUseByCode(data) {
+        return fetch(GOBALS.URL + '/promotion_use/updatePromotionUseByCode', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
 
-    
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result:false
+                };
+            });
+    }
 
-   
 }

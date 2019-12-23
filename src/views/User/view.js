@@ -16,6 +16,7 @@ import OrderListModel from '../../models/OrderListModel'
 import TableModel from '../../models/TableModel'
 import GPSCalculateModel from '../../models/GPSCalculateModel'
 import PromotionModel from '../../models/PromotionModel'
+import PromotionUseModel from '../../models/PromotionUseModel'
 import { geolocated } from "react-geolocated";
 
 const menu_model = new MenuModel
@@ -25,6 +26,7 @@ const order_list_model = new OrderListModel
 const table_model = new TableModel
 const gps_model = new GPSCalculateModel
 const promotion_model = new PromotionModel
+const promotion_use_model = new PromotionUseModel
 var cart = [];
 class HomeView extends Component {
     constructor(props) {
@@ -286,19 +288,46 @@ class HomeView extends Component {
         var order_service = document.getElementById('order_service').value
         // console.log("order_service", order_service);
         var total_sum = this.sumtotal();
-        console.log("total_sum :", total_sum.sum_price);
-
-        var order = {
-            // 'table_code': this.state.result,
-            'order_service': order_service,
-            'customer_code': 'CM001',
-            'order_date': toDay,
-            'order_code': this.state.order_code,
-            'order_total_price': total_sum.total,
-            'amount': total_sum.sum_price
+        var order
+        console.log("this.state.promotion :", this.state.promotion);
+        if (this.state.promotion != undefined) {
+            order = {
+                // 'table_code': this.state.result,
+                'order_service': order_service,
+                'customer_code': 'CM001',
+                'order_date': toDay,
+                'order_code': this.state.order_code,
+                'promotion_code': this.state.promotion.promotion_code,
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+        } else {
+            order = {
+                // 'table_code': this.state.result,
+                'order_service': order_service,
+                'customer_code': 'CM001',
+                'order_date': toDay,
+                'order_code': this.state.order_code,
+                'promotion_code': '',
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
         }
 
+
         const result1 = await order_model.updateOrderByCode(order)
+        if (this.state.promotion != undefined) {
+            var promotion_use = {
+                'customer_code': "CUS0001",
+                'promotion_code': this.state.promotion.promotion_code,
+                'discount_code': this.state.promotion.discount_code,
+                'order_code': order_code,
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+            const res = await promotion_use_model.updatePromotionUseByCode(promotion_use)
+        }
+        const res2 = await promotion_use_model.insertPromotionUse(promotion_use)
         const result2 = await order_list_model.deleteOrderListByCode({ 'order_code': this.state.order_code })
         console.log("result2", result2);
 
@@ -386,20 +415,46 @@ class HomeView extends Component {
         const data = new FormData();
         var order_service = document.getElementById('order_service').value
         var total_sum = this.sumtotal()
-        var order = {
-            'table_code': this.state.result,
-            'order_service': order_service,
-            'customer_code': 'CM001',
-            'order_date': toDay,
-            'order_code': order_code,
-            'order_total_price': total_sum.total,
-            'amount': total_sum.sum_price
+        var order
+        if (this.state.promotion != undefined) {
+            order = {
+                'table_code': this.state.result,
+                'order_service': order_service,
+                'customer_code': 'CM001',
+                'order_date': toDay,
+                'order_code': order_code,
+                'promotion_code': this.state.promotion.promotion_code,
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+        } else {
+            order = {
+                'table_code': this.state.result,
+                'order_service': order_service,
+                'customer_code': 'CM001',
+                'order_date': toDay,
+                'order_code': order_code,
+                'promotion_code': '',
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
         }
 
 
         console.log("order", order);
 
         const res = await order_model.insertOrder(order)
+        if (this.state.promotion != undefined) {
+            var promotion_use = {
+                'customer_code': "CUS0001",
+                'promotion_code': this.state.promotion.promotion_code,
+                'discount_code': this.state.promotion.discount_code,
+                'order_code': order_code,
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+            const res2 = await promotion_use_model.insertPromotionUse(promotion_use)
+        }
         console.log("222222222", res);
 
         for (var key in this.state.cart) {
@@ -425,7 +480,8 @@ class HomeView extends Component {
             }
         }
         this.setState({
-            order_code: order_code
+            order_code: order_code,
+            sum_price: total_sum.sum_price
         })
 
     }
@@ -643,7 +699,7 @@ class HomeView extends Component {
                         <Row>
                             <Col lg="4"></Col>
                             <Col lg="4" style={{ textAlign: 'center' }}>
-                                <Label>ราคารวม</Label>
+                                <Label>ราคารวมมม</Label>
                             </Col>
                             <Col lg="4" style={{ textAlign: 'center' }}>
                                 <Label className="text_head"> {this.state.sum_price} </Label>
