@@ -47,7 +47,6 @@ class HomeView extends Component {
         this.deleteItem = this.deleteItem.bind(this);
         this.rendertotal = this.rendertotal.bind(this);
         this.sumtotal = this.sumtotal.bind(this);
-        // this.renderBill = this.renderBill.bind(this);
         this.onBillDetail = this.onBillDetail.bind(this);
         this.renderOrderList = this.renderOrderList.bind(this);
         this.toggle = this.toggle.bind(this);
@@ -55,39 +54,11 @@ class HomeView extends Component {
         this.handleScan = this.handleScan.bind(this)
         this.insertOrder = this.insertOrder.bind(this)
         this.close = this.close.bind(this)
-        this.getMyLocation = this.getMyLocation.bind(this)
+        // this.getMyLocation = this.getMyLocation.bind(this)
         this.showQR = this.showQR.bind(this)
     }
 
-    async handleScan(data) {
-        this.setState({
-            result: data,
-        })
-        console.log(data);
-        if (data != null) {
-            var table_code = { table_code: data }
-            var table_list = await table_model.getTableByCode(table_code)
-            var insert = false
-            var table_list_data = table_list.data
-            // console.log("table_list_data", table_list_data.length);
-            if (table_list_data != "" && !insert) {
-                this.close();
-                // console.log("table_list.data.length.zone_id", table_list.zone_id);
-
-                this.insertOrder()
-                insert = true
-            }
-        }
-    }
-    handleError(err) {
-        console.error(err)
-    }
-    getMyLocation() {
-
-
-    }
     async componentDidMount() {
-
         var menutype_list = await menutype_model.getMenuTypeBy()
         this.setState({
             menutype_list: menutype_list.data,
@@ -113,8 +84,53 @@ class HomeView extends Component {
             promotion_list: promotion_list.data,
         })
 
+    }
 
+    // getMyLocation() {
 
+    // }
+
+    toggle() {
+        this.setState(prevState => ({
+            modal: !prevState.modal
+        }));
+    }
+
+    toggle1() {
+        this.setState(prevState => ({
+            modal1: !prevState.modal
+        }));
+    }
+
+    close() {
+        this.setState({
+            modal1: false
+        })
+    }
+
+    handleError(err) {
+        console.error(err)
+    }
+
+    async handleScan(data) {
+        this.setState({
+            result: data,
+        })
+        console.log(data);
+        if (data != null) {
+            var table_code = { table_code: data }
+            var table_list = await table_model.getTableByCode(table_code)
+            var insert = false
+            var table_list_data = table_list.data
+            // console.log("table_list_data", table_list_data.length);
+            if (table_list_data != "" && !insert) {
+                this.close();
+                // console.log("table_list.data.length.zone_id", table_list.zone_id);
+
+                this.insertOrder()
+                insert = true
+            }
+        }
     }
 
     async getMenuByCode(code) {
@@ -145,7 +161,6 @@ class HomeView extends Component {
         }
     }
 
-
     renderOrderList() {
         var Bill_order_list = []
         for (let i = 0; i < this.state.order_list.length; i++) {
@@ -170,7 +185,6 @@ class HomeView extends Component {
     }
 
     addItem(data) {
-
         var name = data.menu_name;
         var price = data.menu_price;
         var code = data.menu_code;
@@ -178,19 +192,19 @@ class HomeView extends Component {
     }
 
     addItemButton(data) {
-
         var name = data.name;
         var price = data.price;
         var code = data.code;
         this.addItemTocart(name, price, code, 1)
     }
-    deleteItemButton(data) {
 
+    deleteItemButton(data) {
         var name = data.name;
         var price = data.price;
         var code = data.code;
         this.deleteItem(name, price, code, 1)
     }
+
     addItemTocart(name, price, code, count) {
         for (var item in cart) {
             if (cart[item].code === code) {
@@ -201,19 +215,18 @@ class HomeView extends Component {
                 return;
             }
         }
-
         cart.push({
             name: name,
             price: price,
             code: code,
             count: count
         });
-
         // console.log("cart", cart);
         this.setState({
             cart: cart
         })
     }
+
     deleteItem(name, price, code, count) {
         for (var item in cart) {
             if (cart[item].code === code) {
@@ -257,27 +270,148 @@ class HomeView extends Component {
                 menulist.push(
                     <Col lg="4">
                         <Card onClick={this.addItem.bind(this, this.state.menu_list[i])}>
-                            {/* <CardImg top width="100%" src="/logo_bubblebrown.png" alt="Card image cap" /> */}
                             <CardBody>
                                 <CardTitle><label >{this.state.menu_list[i].menu_name}</label> </CardTitle>
                             </CardBody>
                         </Card>
-
-                        {/* </ClickNHold> */}
                     </Col>
                 )
             }
             return menulist;
         }
     }
-    async getPromotion() {
-        var discount_code = document.getElementById("discount_code").value
-        const promotion = await promotion_model.getPromotionByCode({ "discount_code": discount_code })
-        console.log(promotion.data);
 
+    async showQR(my_location) {
+        var coord = {
+            lat_start: 14.999548299999999,
+            lon_start: 102.10612169999999,
+            // lat_start: my_location.latitude,
+            // lon_start: my_location.longitude,
+            lat_end: 14.999548299999999,
+            lon_end: 102.10612169999999
+        }
+        var gps = await gps_model.getGPS(coord)
+        console.log(gps);
+        if (gps.distance <= 200) {
+            swal({
+                title: "คุณต้องการสั่งอาหารใช่หรือไม่ ?",
+                // text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        this.toggle1()
+                    }
+                });
+        } else {
+            swal({
+                title: "คุณไม่ได้อยู่ในพื้นที่ที่กำหนด",
+                // text: "Once deleted, you will not be able to recover this imaginary file!",
+                icon: "warning",
+                button: "Close",
+            })
+        }
+    }
+
+    async showScanQR() {
+        const location = window.navigator && window.navigator.geolocation
+
+        if (location) {
+            location.getCurrentPosition((position) => {
+                var my_location = position.coords
+                this.showQR(position.coords)
+
+            }, (error) => {
+                swal({
+                    title: "อุปกรณ์ไม่รองรับ GPS",
+                    // text: "Once deleted, you will not be able to recover this imaginary file!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+            })
+        }
+    }
+
+    async insertOrder() {
+        var order = []
+        const max_code = await order_model.getOrderMaxCode()//province data
+        var order_code = 'OD' + max_code.data.order_code_max
+        // console.log(max_code);
+        const date_now = new Date();
+        var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
+        const data = new FormData();
+        var order_service = document.getElementById('order_service').value
+        var total_sum = this.sumtotal()
+        var order
+        if (this.state.promotion != undefined) {
+            order = {
+                'table_code': this.state.result,
+                'order_service': order_service,
+                'customer_code': 'CM001',
+                'order_date': toDay,
+                'order_code': order_code,
+                'promotion_code': this.state.promotion.promotion_code,
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+        } else {
+            order = {
+                'table_code': this.state.result,
+                'order_service': order_service,
+                'customer_code': 'CM001',
+                'order_date': toDay,
+                'order_code': order_code,
+                'promotion_code': '',
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+        }
+        // console.log("order", order);
+
+        const res = await order_model.insertOrder(order)
+        if (this.state.promotion != undefined) {
+            var promotion_use = {
+                'customer_code': "CUS0001",
+                'promotion_code': this.state.promotion.promotion_code,
+                'discount_code': this.state.promotion.discount_code,
+                'order_code': order_code,
+                'order_total_price': total_sum.total,
+                'amount': total_sum.sum_price
+            }
+            const res2 = await promotion_use_model.insertPromotionUse(promotion_use)
+        }
+        // console.log("222222222", res);
+
+        for (var key in this.state.cart) {
+            var order_list = {
+                order_code: order_code,
+                menu_code: this.state.cart[key].code,
+                order_list_qty: this.state.cart[key].count,
+                order_list_name: this.state.cart[key].name,
+                order_list_price_qty: this.state.cart[key].price,
+                order_list_price_sum_qty: this.state.cart[key].count * this.state.cart[key].price,
+                order_list_price_sum: total_sum.sum_price
+            }
+            const arr = await order_list_model.insertOrderList(order_list)
+            if (order_list != undefined) {
+                this.close();
+                swal({
+                    title: "สั่งอาหารเรียบร้อย",
+                    text: "โปรดรออาหารสักครู่...",
+                    icon: "success",
+                    button: "Close",
+                });
+
+            }
+        }
         this.setState({
-            promotion: promotion.data
+            order_code: order_code,
+            sum_price: total_sum.sum_price
         })
+
     }
 
     async updateOrder(order_code) {
@@ -292,7 +426,6 @@ class HomeView extends Component {
         console.log("this.state.promotion :", this.state.promotion);
         if (this.state.promotion != undefined) {
             order = {
-                // 'table_code': this.state.result,
                 'order_service': order_service,
                 'customer_code': 'CM001',
                 'order_date': toDay,
@@ -303,7 +436,6 @@ class HomeView extends Component {
             }
         } else {
             order = {
-                // 'table_code': this.state.result,
                 'order_service': order_service,
                 'customer_code': 'CM001',
                 'order_date': toDay,
@@ -313,7 +445,6 @@ class HomeView extends Component {
                 'amount': total_sum.sum_price
             }
         }
-
 
         const result1 = await order_model.updateOrderByCode(order)
         if (this.state.promotion != undefined) {
@@ -353,137 +484,14 @@ class HomeView extends Component {
         }
     }
 
-    async showQR(my_location) {
-        var coord = {
-            lat_start: 14.999548299999999,
-            lon_start: 102.10612169999999,
-            // lat_start: my_location.latitude,
-            // lon_start: my_location.longitude,
-            lat_end: 14.999548299999999,
-            lon_end: 102.10612169999999
-        }
-        var gps = await gps_model.getGPS(coord)
-        console.log(gps);
-        if (gps.distance <= 200) {
-            swal({
-                title: "คุณต้องการสั่งอาหารใช่หรือไม่ ?",
-                // text: "Once deleted, you will not be able to recover this imaginary file!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        this.toggle1()
-                    }
-                });
-        } else {
-            swal({
-                title: "คุณไม่ได้อยู่ในพื้นที่ที่กำหนด",
-                // text: "Once deleted, you will not be able to recover this imaginary file!",
-                icon: "warning",
-                button: "Close",
-            })
-        }
-    }
-    async showScanQR() {
-        const location = window.navigator && window.navigator.geolocation
+    async getPromotion() {
+        var discount_code = document.getElementById("discount_code").value
+        const promotion = await promotion_model.getPromotionByCode({ "discount_code": discount_code })
+        console.log(promotion.data);
 
-        if (location) {
-            location.getCurrentPosition((position) => {
-                var my_location = position.coords
-                this.showQR(position.coords)
-
-            }, (error) => {
-                swal({
-                    title: "อุปกรณ์ไม่รองรับ GPS",
-                    // text: "Once deleted, you will not be able to recover this imaginary file!",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-            })
-        }
-    }
-    async insertOrder() {
-        var order = []
-        const max_code = await order_model.getOrderMaxCode()//province data
-        var order_code = 'OD' + max_code.data.order_code_max
-        // console.log(max_code);
-        const date_now = new Date();
-        var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
-        const data = new FormData();
-        var order_service = document.getElementById('order_service').value
-        var total_sum = this.sumtotal()
-        var order
-        if (this.state.promotion != undefined) {
-            order = {
-                'table_code': this.state.result,
-                'order_service': order_service,
-                'customer_code': 'CM001',
-                'order_date': toDay,
-                'order_code': order_code,
-                'promotion_code': this.state.promotion.promotion_code,
-                'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
-            }
-        } else {
-            order = {
-                'table_code': this.state.result,
-                'order_service': order_service,
-                'customer_code': 'CM001',
-                'order_date': toDay,
-                'order_code': order_code,
-                'promotion_code': '',
-                'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
-            }
-        }
-
-
-        console.log("order", order);
-
-        const res = await order_model.insertOrder(order)
-        if (this.state.promotion != undefined) {
-            var promotion_use = {
-                'customer_code': "CUS0001",
-                'promotion_code': this.state.promotion.promotion_code,
-                'discount_code': this.state.promotion.discount_code,
-                'order_code': order_code,
-                'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
-            }
-            const res2 = await promotion_use_model.insertPromotionUse(promotion_use)
-        }
-        console.log("222222222", res);
-
-        for (var key in this.state.cart) {
-            var order_list = {
-                order_code: order_code,
-                menu_code: this.state.cart[key].code,
-                order_list_qty: this.state.cart[key].count,
-                order_list_name: this.state.cart[key].name,
-                order_list_price_qty: this.state.cart[key].price,
-                order_list_price_sum_qty: this.state.cart[key].count * this.state.cart[key].price,
-                order_list_price_sum: total_sum.sum_price
-            }
-            const arr = await order_list_model.insertOrderList(order_list)
-            if (order_list != undefined) {
-                this.close();
-                swal({
-                    title: "สั่งอาหารเรียบร้อย",
-                    text: "โปรดรออาหารสักครู่...",
-                    icon: "success",
-                    button: "Close",
-                });
-
-            }
-        }
         this.setState({
-            order_code: order_code,
-            sum_price: total_sum.sum_price
+            promotion: promotion.data
         })
-
     }
 
     renderpromotion() {
@@ -502,7 +510,6 @@ class HomeView extends Component {
         }
         return promotion_list;
     }
-
 
     rendertotal() {
         if (this.state.cart != undefined) {
@@ -543,6 +550,7 @@ class HomeView extends Component {
         }
 
     }
+
     sumtotal() {
         if (this.state.cart != undefined) {
             var sum = 0;
@@ -563,34 +571,15 @@ class HomeView extends Component {
                     // console.log("sum_discount_price", sum);
                 }
             }
-            // console.log("3333333333", sum);
-
             var total_sum = {
                 sum_price: sum,
                 total: total
             }
-            // console.log("3333333333", this.state.sum_price);
             // console.log("5555555555", this.state.total);
             return total_sum;
         }
     }
 
-    toggle() {
-        this.setState(prevState => ({
-            modal: !prevState.modal
-        }));
-    }
-
-    toggle1() {
-        this.setState(prevState => ({
-            modal1: !prevState.modal
-        }));
-    }
-    close() {
-        this.setState({
-            modal1: false
-        })
-    }
     async onBillDetail(order_code) {
         var order_list = await order_list_model.getOrderListBy(order_code)
         this.setState({
@@ -602,7 +591,6 @@ class HomeView extends Component {
 
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
-
         const previewStyle = {
             height: '100%',
             width: '100%',
@@ -610,10 +598,8 @@ class HomeView extends Component {
 
         return (
             <div>
-
                 <Row style={{ minWidth: '100%', height: '100%', minHeight: '80vh' }}>
                     <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
-
                         <Row style={{ minWidth: '100%' }}>
                             {this.renderMenuType()}
                         </Row>
@@ -634,10 +620,10 @@ class HomeView extends Component {
                         </Row>
                         <Row >
                             <div style={{ paddingTop: '10px', paddingLeft: '10px', paddingBottom: '30px' }}> รายการอาหาร</div>
-
                         </Row>
 
                         {this.rendercart()}
+
                         <Row>
                             <Col lg="2">
                                 <div style={{ paddingTop: '10px', paddingLeft: '10px', paddingBottom: '30px' }}>CODE </div>
@@ -646,10 +632,14 @@ class HomeView extends Component {
                                 <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
                             </Col>
                         </Row>
+
                         {this.renderpromotion()}
+
                         <Row style={{ textAlign: 'right', justifyContent: 'end' }}>
                             <Col>
+
                                 {this.rendertotal()}
+
                                 {this.state.cart != undefined && this.state.cart != "" ?
                                     <Row style={{ textAlign: 'right' }}>
                                         <Col lg='12'>
@@ -661,16 +651,12 @@ class HomeView extends Component {
                                                     </div>
                                                     : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
                                                 }
-                                                {/* <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button> */}
                                             </div>
                                         </Col>
-
                                     </Row>
                                     : ''}
                             </Col>
                         </Row>
-
-
                     </Col>
                 </Row>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
@@ -688,14 +674,12 @@ class HomeView extends Component {
                                     <Col lg="4" style={{ textAlign: 'center' }}>
                                         <Label> ราคา </Label>
                                     </Col>
-
                                 </Row>
-
                             </Col>
-
                         </Row>
 
                         {this.renderOrderList()}
+
                         <Row>
                             <Col lg="4"></Col>
                             <Col lg="4" style={{ textAlign: 'center' }}>
@@ -710,8 +694,6 @@ class HomeView extends Component {
                         <Button color="primary" onClick={this.toggle} style={{ width: 100, height: 40 }}>OK</Button>
                     </ModalFooter>
                 </Modal>
-
-
                 <Modal isOpen={this.state.modal1} toggle={this.toggle1} size="lg">
                     <ModalBody >
                         <div>
