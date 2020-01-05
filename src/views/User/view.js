@@ -69,7 +69,7 @@ class HomeView extends Component {
             menulist: menulist.data
         })
 
-        var menu_list = await menu_model.getMenuByCode('MNT01')
+        var menu_list = await menu_model.getMenuByCode('1')
         this.setState({
             menu_list: menu_list.data
         })
@@ -85,11 +85,6 @@ class HomeView extends Component {
         })
 
     }
-
-    // getMyLocation() {
-
-    // }
-
     toggle() {
         this.setState(prevState => ({
             modal: !prevState.modal
@@ -188,24 +183,28 @@ class HomeView extends Component {
         var name = data.menu_name;
         var price = data.menu_price;
         var code = data.menu_code;
-        this.addItemTocart(name, price, code, 1)
+        var type = data.menu_type_id;
+        this.addItemTocart(name, price, code, 1, type)
     }
 
     addItemButton(data) {
         var name = data.name;
         var price = data.price;
         var code = data.code;
-        this.addItemTocart(name, price, code, 1)
+        var type = data.menu_type_id;
+        console.log('data', data)
+        this.addItemTocart(name, price, code, 1, type)
     }
 
     deleteItemButton(data) {
         var name = data.name;
         var price = data.price;
         var code = data.code;
-        this.deleteItem(name, price, code, 1)
+        var type = data.menu_type_id;
+        this.deleteItem(name, price, code, 1, type)
     }
 
-    addItemTocart(name, price, code, count) {
+    addItemTocart(name, price, code, count, type) {
         for (var item in cart) {
             if (cart[item].code === code) {
                 cart[item].count++;
@@ -219,15 +218,16 @@ class HomeView extends Component {
             name: name,
             price: price,
             code: code,
-            count: count
+            count: count,
+            type: type
         });
-        // console.log("cart", cart);
+        console.log("cart", cart);
         this.setState({
             cart: cart
         })
     }
 
-    deleteItem(name, price, code, count) {
+    deleteItem(name, price, code, count, type) {
         for (var item in cart) {
             if (cart[item].code === code) {
                 cart[item].count--;
@@ -492,6 +492,7 @@ class HomeView extends Component {
         this.setState({
             promotion: promotion.data
         })
+        this.sumtotal()
     }
 
     renderpromotion() {
@@ -514,31 +515,14 @@ class HomeView extends Component {
     rendertotal() {
         if (this.state.cart != undefined) {
             var order_total = []
-            var sum = 0;
-            for (let i = 0; i < this.state.cart.length; i++) {
-                sum += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
-                // console.log("..........", this.state.cart[i].count);
-                // console.log("..1........", this.state.cart[i].price);
-            }
-            if (this.state.promotion != undefined) {
-                if (this.state.promotion.discount_percent != "") {
-                    var discount_price = (sum * this.state.promotion.discount_percent) / 100
-                    sum = sum - discount_price
-                    // console.log("sum_discount_percent", sum);
-                }
-                if (this.state.promotion.discount_price != "") {
-                    var discount_price = sum - this.state.promotion.discount_price
-                    sum = discount_price
-                    // console.log("sum_discount_price", sum);
-                }
-            }
+            var sumtotal = this.sumtotal()
             order_total.push(
                 <Row>
                     <Col lg="8" style={{ paddingTop: '30px' }}>
                         <label>ราคารวม</label>
                     </Col>
                     <Col lg="4" style={{ textAlign: 'center', paddingTop: '30px' }}>
-                        <label>{sum}</label>
+                        <label>{sumtotal.sum_price}</label>
                     </Col>
                 </Row>
             )
@@ -555,9 +539,45 @@ class HomeView extends Component {
         if (this.state.cart != undefined) {
             var sum = 0;
             var total = 0;
+            var sum1 = 0;
+            var sum2 = 0;
+            var sum3 = 0;
+            var sum1_count = 0;
+            var sum2_count = 0;
+            var sum3_count = 0;
+            var price1 = []
+            var price2 = []
+            var price3 = []
+
             for (let i = 0; i < this.state.cart.length; i++) {
                 sum += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
                 total += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
+            }
+            for (let i = 0; i < this.state.cart.length; i++) {
+                if (this.state.cart[i].type == 1) {
+                    for (var j = 0; j < this.state.cart[i].count; j++) {
+                        price1.push(this.state.cart[i].price)
+                    }
+
+                    sum1_count += parseFloat(this.state.cart[i].count)
+                    sum1 += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
+
+                }
+                if (this.state.cart[i].type == 2) {
+                    for (var j = 0; j < this.state.cart[i].count; j++) {
+                        price2.push(this.state.cart[i].price)
+                    }
+                    sum2_count += parseFloat(this.state.cart[i].count)
+                    sum2 += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
+                }
+                if (this.state.cart[i].type == 3) {
+                    for (var j = 0; j < this.state.cart[i].count; j++) {
+                        price3.push(this.state.cart[i].price)
+                    }
+                    sum3_count += parseFloat(this.state.cart[i].count)
+                    sum3 += parseFloat(this.state.cart[i].count) * parseFloat(this.state.cart[i].price)
+                }
+
             }
             if (this.state.promotion != undefined) {
                 if (this.state.promotion.discount_percent != "") {
@@ -570,12 +590,67 @@ class HomeView extends Component {
                     sum = discount_price
                     // console.log("sum_discount_price", sum);
                 }
+                if (this.state.promotion.promotion_type == "แถม") {
+                    if (this.state.promotion.menu_type_id == 1 && this.state.promotion.discount_giveaway_buy <= sum1_count) {
+                        var sum1_discount = sum1;
+                        for (let i = 0; i < this.state.promotion.discount_giveaway; i++) {
+                            var min = Math.min.apply(Math, price1);
+                            sum1_discount = sum1_discount - min
+
+                            for (var key in price1) {
+                                if (price1[key] == min) {
+                                    price1.splice(key, 1);
+                                    break;
+                                }
+                            }
+                            console.log('sum1_discount', sum1_discount);
+
+                        }
+                        total = sum1 + sum2 + sum3
+                        sum = sum1_discount + sum2 + sum3
+
+
+                    }
+                    if (this.state.promotion.menu_type_id == 2 && this.state.promotion.discount_giveaway_buy <= sum2_count) {
+                        var sum2_discount = sum2;
+                        for (let i = 0; i < this.state.promotion.discount_giveaway; i++) {
+                            var min = Math.min.apply(Math, price1);
+                            sum2_discount = sum2_discount - min
+
+                            for (var key in price2) {
+                                if (price2[key] == min) {
+                                    price2.splice(key, 1);
+                                    break;
+                                }
+                            }
+                        }
+                        total = sum1 + sum2 + sum3
+                        sum = sum2_discount + sum1 + sum3
+                    }
+                    if (this.state.promotion.menu_type_id == 3 && this.state.promotion.discount_giveaway_buy <= sum3_count) {
+                        var sum3_discount = sum3
+                        for (let i = 0; i < this.state.promotion.discount_giveaway; i++) {
+                            var min = Math.min.apply(Math, price1);
+                            sum3_discount = sum3_discount - min
+
+                            for (var key in price3) {
+                                if (price3[key] == min) {
+                                    price3.splice(key, 1);
+                                    break;
+                                }
+                            }
+                        }
+
+                        total = sum1 + sum2 + sum3
+                        sum = sum3_discount + sum2 + sum1
+                    }
+                }
             }
             var total_sum = {
                 sum_price: sum,
                 total: total
             }
-            // console.log("5555555555", this.state.total);
+            console.log("5555555555", total_sum);
             return total_sum;
         }
     }
