@@ -45,16 +45,19 @@ class PromotionView extends Component {
         this.setState({
             menutype_list: menutype_list.data,
         })
+        // console.log("menutype_list :",menutype_list);
+        
 
     }
 
     async getPromotionByCode(code) {
         var promotion_list = await promotion_model.getPromotionByCode(code)
-        console.log("promotion_list");
 
         this.setState({
             promotion_list: promotion_list.data
         })
+        console.log("promotion_list :",promotion_list);
+        
     }
 
     renderMenuType() {

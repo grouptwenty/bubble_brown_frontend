@@ -486,7 +486,7 @@ class HomeView extends Component {
 
     async getPromotion() {
         var discount_code = document.getElementById("discount_code").value
-        const promotion = await promotion_model.getPromotionByCode({ "discount_code": discount_code })
+        const promotion = await promotion_model.getPromotionByDiscountCode({ "discount_code": discount_code })
         console.log(promotion.data);
 
         this.setState({
