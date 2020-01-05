@@ -149,7 +149,7 @@ class HomeView extends Component {
                 type_list.push(
                     <Col style={{ borderWidth: 1, borderStyle: 'solid', height: 50, textAlign: 'center' }}>
                         <div>
-                            <label style={{ margin: '15px' }} onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_code)}>
+                            <label style={{ margin: '15px' }} onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_id)}>
                                 {this.state.menutype_list[i].menu_type_name}
                             </label>
                         </div>
