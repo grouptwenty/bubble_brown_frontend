@@ -45,7 +45,7 @@ class PromotionView extends Component {
         this.setState({
             menutype_list: menutype_list.data,
         })
-        // console.log("menutype_list :",menutype_list);
+        console.log("menutype_list :",menutype_list);
         
 
     }

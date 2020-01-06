@@ -1,10 +1,12 @@
 import React, { Component, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Container } from 'reactstrap';
+import { Container, Modal, ModalBody, Row, Col, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { saveStateLogout } from '../../_helpers';
 import MenuComponent from './Menu';
+import FacebookLogin from 'react-facebook-login';
 // import { store } from '../../_helpers';
+import { Container as Container1, Button, Link } from 'react-floating-action-button'
 import {
   AppAside,
   AppBreadcrumb,
@@ -20,11 +22,13 @@ import {
 
 // routes config
 import routes from '../../routes';
+// import CustomerModel from '../../models/CustomerModel'
 var items = []
 // const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 var menu = new MenuComponent();
+// const customer_model = new CustomerModel
 
 
 class DefaultLayout extends Component {
@@ -42,12 +46,32 @@ class DefaultLayout extends Component {
     var value = menu.renderMenu()
     items['items'] = value
     console.log(" item = >", items);
+    // this.toggle_login = this.toggle_login.bind(this);
+    // this.responseFacebook = this.responseFacebook.bind(this);
+    // this.CustomerlogIn = this.CustomerlogIn.bind(this);
 
   }
+
 
   async componentDidMount() {
 
   }
+
+  // toggle_login() {
+  //   this.setState(prevState => ({
+  //     model_login: !prevState.model_login
+  //   }));
+  // }
+
+  
+
+  CustomerlogIn() {
+    this.props.history.push('/login_customer/')
+  }
+
+
+  
+
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
@@ -80,9 +104,9 @@ class DefaultLayout extends Component {
             <AppSidebarFooter />
             <AppSidebarMinimizer />
           </AppSidebar> */}
-          <main className="main"  style={{ padding: 0+'!important' }}>
+          <main className="main" style={{ padding: 0 + '!important' }}>
             {/* <AppBreadcrumb appRoutes={routes} /> */}
-            <Container fluid style={{ padding: 0+'!important' }}>
+            <Container fluid style={{ padding: 0 + '!important' }}>
               <Suspense fallback={this.loading()}>
                 <Switch>
                   {routes.map((route, idx) => {
@@ -97,6 +121,20 @@ class DefaultLayout extends Component {
                         )} />
                     ) : (null);
                   })}
+
+                  <div>
+                    <Container1>
+
+                      <Button
+                        tooltip="The big plus button!"
+                        icon="fa fa-user-plus"
+                        rotate={true}
+                        onClick={this.CustomerlogIn.bind(this)}
+                      />
+                    </Container1>
+
+                  
+                  </div>
                   <Redirect from="/" to="/dashboard" />
                 </Switch>
               </Suspense>
