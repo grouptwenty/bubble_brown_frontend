@@ -8,6 +8,7 @@ import { formatDate, parseDate, } from 'react-day-picker/moment';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import ImgDefault from '../../assets/img/img_default.png'
+import { saveStateLogout } from '../../_helpers';
 import CustomerModel from '../../models/CustomerModel'
 const customer_model = new CustomerModel
 
@@ -29,7 +30,7 @@ class ProfileView extends Component {
 
 
         var customer_data = await localStorage.getItem('@customer_data')
-
+ console.log("customer_data", customer_data);
         // var customer = await customer_model.getCustomerByEmail({"customer_email":customer_data.customer_email})
         this.setState({
             customer_data: JSON.parse(customer_data)
@@ -38,12 +39,18 @@ class ProfileView extends Component {
 
 
 
-        console.log("customer_data", customer_data);
+       
         // console.log("customer_data",this.state.customer_data.customer_email);
 
     }
 
-
+    signOut(e) {
+        e.preventDefault()
+        localStorage.clear();
+        // this.props.setUser([])
+        saveStateLogout()
+        this.props.history.push('/login_customer')
+      }
 
     render() {
 
@@ -109,17 +116,11 @@ class ProfileView extends Component {
                             </Col>
                             <Col lg="12">
                                 <Row >
-                                    <Col lg="12">
-                                        <label style={{fontSize:'12pt'}}>เบอร์</label>
+                                    <Col lg="12" style={{textAlign:'center'}}>
+                                        <Button onClick={e => this.signOut(e)}>ออกจากระบบ</Button>
                                     </Col>
                                 </Row>
-                                <Row >
-                                    <Col lg="12">
-                                        <label style={{fontSize:'14pt'}}>{this.state.customer_data.customer_tel}</label>
-                                    </Col>
-
-                                </Row>
-                                <hr/>
+                                
                             </Col>
                         </Row>
                     </Col>

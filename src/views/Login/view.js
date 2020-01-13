@@ -8,6 +8,7 @@ import FacebookLogin from 'react-facebook-login';
 import CustomerModel from '../../models/CustomerModel'
 import useLiff, { LiffData, Liff, LineProfile } from 'react-liff-hooks';
 import { OAuth } from "oauthio-web";
+import { R } from 'pdfmake/build/pdfmake';
 const customer_model = new CustomerModel
 
 
@@ -36,11 +37,45 @@ class loginView extends Component {
     Auth = () => {
         OAuth.initialize("HBPP7MOsssNFYnKdbu9qyPT0Fyo");
         OAuth.popup("line")
-            .done(res => {
-                console.log("resssssssss", res);
-                this.setState({
-                    customer_data_line: res
-                })
+            .done(async res => {
+                var info = await customer_model.getLineInformation(res.access_token)
+                console.log("infooooooooooooooooo", info);
+
+                const max_code = await customer_model.getCustomerMaxCode()
+                var customer_code = 'CM' + max_code.data.customer_code_max
+                // console.log("customer_code------------>", customer_code);
+                var customer_data = {
+                    customer_code: customer_code,
+                    customer_name: info.displayName,
+                    customer_id: info.userId,
+                    customer_email: '',
+                    customer_tel: '',
+                    customer_image: info.pictureUrl
+
+                }
+
+                var check_Id = await customer_model.getCustomerById(info)
+                console.log("check_Id------------>", check_Id);
+                if (check_Id.data != undefined && check_Id.data != null) {
+
+                    var customer_data = {
+                        customer_code: check_Id.data.customer_code,
+                        customer_name: info.displayName,
+                        customer_id: info.userId,
+                        customer_email: '',
+                        customer_tel: '',
+                        customer_image: info.pictureUrl
+
+                    }
+
+                    localStorage.setItem('@customer_data', JSON.stringify(check_Id.data))
+                    var update_customer = await customer_model.updateCustomerByCode(customer_data)
+                    this.props.history.push('/profile/')
+                } else {
+                    var insert_customer = await customer_model.insertCustomer(customer_data)
+                    localStorage.setItem('@customer_data', JSON.stringify(customer_data))
+                    this.props.history.push('/profile/')
+                }
             })
             .fail(err => {
             });
@@ -57,15 +92,17 @@ class loginView extends Component {
 
         } else {
             login_or_profile.push(
-                <div>สมัครสมาชิกกก
-                 <button onClick={this.Auth}
+                <div>
+                    <Button style={{ backgroundColor: '#00B900', color: '#fff' ,height:'60px'}} onClick={this.Auth}
                         className="btn btn-tw btn-block">
-                        Sign in with facebook
-                    </button>
+                        เข้าสู่ะบบด้วย Line
+                    </Button>
                 </div>
             )
         } return login_or_profile;
     }
+
+
     renderPage() {
         var login_or_profile = []
         if (this.state.customer_data != undefined) {
@@ -75,15 +112,19 @@ class loginView extends Component {
 
         } else {
             login_or_profile.push(
-                <div>สมัครสมาชิกกก
-                <FacebookLogin
+                <div>
+                    <FacebookLogin
+                        style={{ backgroundColor: '#4267b2', color: 'white', borderRadius: '5px', width: '100%', height: '20px', borderWidth: '0' }}
                         appId="1021322851547683"
                         autoLoad={false}
                         fields="name,email,picture"
                         callback={this.responseFacebook.bind(this)}
-                        cssClass="my-facebook-button-class"
-                        icon="fa-facebook"
+                        // cssClass="my-facebook-button-class"
+                        // icon="fa-facebook"
+                       
                     />
+
+
                 </div>
             )
         } return login_or_profile;
@@ -100,7 +141,7 @@ class loginView extends Component {
             customer_name: response.name,
             customer_id: response.userID,
             customer_email: response.email,
-            customer_tel: '0981013056',
+            customer_tel: '',
             customer_image: response.picture.data.url
 
         }
@@ -114,7 +155,7 @@ class loginView extends Component {
                 customer_name: response.name,
                 customer_id: response.userID,
                 customer_email: response.email,
-                customer_tel: '0981013056222',
+                customer_tel: '',
                 customer_image: response.picture.data.url
 
             }
@@ -124,7 +165,7 @@ class loginView extends Component {
             this.props.history.push('/profile/')
         } else {
             var insert_customer = await customer_model.insertCustomer(customer_data)
-            localStorage.setItem('@customer_data', JSON.stringify(check_email.data))
+            localStorage.setItem('@customer_data', JSON.stringify(customer_data))
             this.props.history.push('/profile/')
         }
         console.log("check_email ===> ", check_email);
@@ -136,8 +177,44 @@ class loginView extends Component {
 
         return (
             <div className="animated fadeIn">
-                {this.renderPage()}
-                {this.renderLineButtonPage()}
+                <Row>
+                    <Col lg="4">
+
+                    </Col>
+                    <Col lg="4" style={{ paddingTop: '50px' }}>
+                        <Card body >
+                            <CardBody>
+                                <Row>
+                                    <Col lg="12" style={{ textAlign: 'center', fontSize: '35pt', color: '#9A7B4F', paddingBottom: '30px' }}>
+                                        <label>เข้าสู่ระบบ</label>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col lg="12" style={{ textAlign: 'center', }}>
+                                        {this.renderPage()}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col lg="12" style={{ textAlign: 'center', }}>
+                                        <hr /> <label> หรือเข้าสู่ระบบผ่านบัญชี Line</label><hr />
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col lg="12" style={{ textAlign: 'center', }}>
+                                        {this.renderLineButtonPage()}
+                                    </Col>
+                                </Row>
+                            </CardBody>
+
+                        </Card>
+                    </Col>
+                    <Col lg="4">
+
+                    </Col>
+                </Row>
+
+
+
             </div >
         )
     }

@@ -91,6 +91,28 @@ export default class CustomerModel {
             });
     }
 
+    async getCustomerById(data) {
+        return fetch(GOBALS.URL + '/customer/getCustomerById', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+
     async deleteCustomerByCode(data) {
         return fetch(GOBALS.URL + '/customer/deleteCustomerByCode', {
             method: 'POST',
@@ -156,7 +178,27 @@ export default class CustomerModel {
                 };
             });
     }
+    async getLineInformation(data) {
+        return fetch('https://api.line.me/v2/profile', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : 'Bearer '+data+''
+            },
+        }).then((response) => response.json())
+            .then((responseJson) => {
 
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
     // async updateCustomer(set, where) {
     //     return fetch(GOBALS.URL + '/journal/updateCustomer', {
     //         method: 'POST',
