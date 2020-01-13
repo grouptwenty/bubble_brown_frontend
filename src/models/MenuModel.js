@@ -31,7 +31,7 @@ export default class MenuModel {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ menu_type_id: data })
+            body: JSON.stringify(data)
         }).then((response) => response.json())
             .then((responseJson) => {
 

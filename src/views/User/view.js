@@ -63,36 +63,39 @@ class HomeView extends Component {
     }
 
     async componentDidMount() {
-        var menutype_list = await menutype_model.getMenuTypeBy()
-        this.setState({
-            menutype_list: menutype_list.data,
-        })
+        var about_code = document.getElementById('about_code').value
+        if (about_code != null && about_code != undefined) {
+            var menutype_list = await menutype_model.getMenuTypeBy({ "about_code": about_code })
+            this.setState({
+                menutype_list: menutype_list.data,
+            })
 
-        var menulist = await menu_model.getMenuBy()
-        this.setState({
-            menulist: menulist.data
-        })
+            var menulist = await menu_model.getMenuBy({ "about_code": about_code })
+            this.setState({
+                menulist: menulist.data
+            })
 
-        var menu_list = await menu_model.getMenuByCode('1')
-        this.setState({
-            menu_list: menu_list.data
-        })
+            var promotion_list = await promotion_model.getPromotionBy({ "about_code": about_code })
+            this.setState({
+                promotion_list: promotion_list.data,
+            })
+
+            var menu_list = await menu_model.getMenuByCode()
+            this.setState({
+                menu_list: menu_list.data
+            })
+        }
 
         var bill_order = await order_model.getOrderBy()
         this.setState({
             bill_order: bill_order.data,
         })
 
-        var promotion_list = await promotion_model.getPromotionBy()
-        this.setState({
-            promotion_list: promotion_list.data,
-        })
-
         var branch_list = await about_model.getAboutBy()
         // console.log("branch_list", branch_list);
-    
+
         this.setState({
-          branch_list: branch_list.data,
+            branch_list: branch_list.data,
         })
 
     }
@@ -140,7 +143,12 @@ class HomeView extends Component {
     }
 
     async getMenuByCode(code) {
-        var menu_list = await menu_model.getMenuByCode(code)
+        var about_code = document.getElementById('about_code').value
+        var arr = {}
+        arr['about_code'] = about_code
+        arr['menu_type_id'] = code
+
+        var menu_list = await menu_model.getMenuByCode(arr)
         // console.log("menulistbycode", menu_list);
         this.setState({
             menu_list: menu_list.data
@@ -678,16 +686,16 @@ class HomeView extends Component {
     renderBranch() {
 
         if (this.state.branch_list != undefined) {
-          var branch = []
-          for (var key in this.state.branch_list) {
-            branch.push(
-                <option value={this.state.branch_list[key].about_code}>{this.state.branch_list[key].about_name_th}</option>
-            )
-          }
-          return branch;
+            var branch = []
+            for (var key in this.state.branch_list) {
+                branch.push(
+                    <option value={this.state.branch_list[key].about_code} >{this.state.branch_list[key].about_name_th}</option>
+                )
+            }
+            return branch;
         }
-      }
-    
+    }
+
 
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
@@ -719,9 +727,9 @@ class HomeView extends Component {
                             </Col>
                             <Col lg="3">
                                 <FormGroup>
-                                    <Input type="select" id="order_service" name="order_service" class="form-control" >
+                                    <Input type="select" id="about_code" name="about_code" class="form-control" onChange={this.componentDidMount.bind(this)}>
                                         <option value="สาขา">สาขา</option>
-                                      {this.renderBranch()}
+                                        {this.renderBranch()}
                                     </Input>
                                 </FormGroup>
                             </Col>
