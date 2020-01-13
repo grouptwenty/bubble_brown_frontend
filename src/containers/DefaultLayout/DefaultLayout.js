@@ -63,14 +63,14 @@ class DefaultLayout extends Component {
   //   }));
   // }
 
-  
+
 
   CustomerlogIn() {
     this.props.history.push('/login_customer/')
   }
 
 
-  
+
 
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
@@ -122,23 +122,24 @@ class DefaultLayout extends Component {
                     ) : (null);
                   })}
 
-                  <div>
-                    <Container1>
 
-                      <Button
-                        tooltip="The big plus button!"
-                        icon="fa fa-user-plus"
-                        rotate={true}
-                        onClick={this.CustomerlogIn.bind(this)}
-                      />
-                    </Container1>
-
-                  
-                  </div>
                   <Redirect from="/" to="/dashboard" />
                 </Switch>
               </Suspense>
+              <Container1>
+
+                <Button
+                  tooltip="The big plus button!"
+                  icon="fa fa-user-plus"
+                  rotate={true}
+                  onClick={this.CustomerlogIn.bind(this)}
+                />
+              </Container1>
             </Container>
+
+
+
+
           </main>
           {/* <AppAside fixed>
             <Suspense fallback={this.loading()}>

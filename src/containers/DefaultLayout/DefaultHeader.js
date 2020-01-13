@@ -19,6 +19,13 @@ class DefaultHeader extends Component {
 
   }
 
+  async componentDidMount() {
+    var customer_data = await localStorage.getItem('@customer_data')
+    this.setState({
+      customer_data: customer_data
+    })
+  }
+
   render() {
 
     // eslint-disable-next-line
@@ -36,29 +43,36 @@ class DefaultHeader extends Component {
         {/* </NavLink> */}
         {/* <AppSidebarToggler className="d-md-down-none" display="lg" /> */}
         {/* <img src="/icon.png" height={60} width={60}/> */}
-
+ {/* {this.state.customer_data != undefined || this.state.customer_data != null ?      */}
         <Row style={{ width: '100%', textAlign: 'center' }}>
-          <Col md="4">
+         
+          <Col md="3">
             <NavLink to="/User"  >
               <strong class="title-menu">สั่งอาหาร</strong>
             </NavLink>
           </Col>
-          <Col md="4">
+          <Col md="3">
             <NavLink to="/Booking" >
               <strong class="title-menu">จองโต๊ะ</strong>
             </NavLink>
           </Col>
-          <Col md="4">
+          <Col md="3">
             <NavLink to="/Promotion" >
               <strong class="title-menu">โปรโมชั่น</strong>
             </NavLink>
           </Col>
-
-
-          {/* <input type="hidden" id="sub_id" value={this.props.user.admin_code} /> */}
-          <Nav className="ml-auto" navbar>
-            {/* <p class="name-project">Suranaree Journal of Science and Techonilogy</p> */}
-            {/* <AppHeaderDropdown direction="down">
+          <Col md="3">
+            <NavLink to="/Profile" >
+              <strong class="title-menu">โปรไฟล์</strong>
+            </NavLink>
+          </Col>
+        </Row>
+{/* :""
+} */}
+        {/* <input type="hidden" id="sub_id" value={this.props.user.admin_code} /> */}
+        {/* <Nav className="ml-auto" navbar> */}
+        {/* <p class="name-project">Suranaree Journal of Science and Techonilogy</p> */}
+        {/* <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
               <NavLink to="#" className="nav-link"><i className="icon-bell"></i><Badge pill color="danger">5</Badge></NavLink>
             </DropdownToggle>
@@ -87,8 +101,9 @@ class DefaultHeader extends Component {
               <DropdownItem onClick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i> Logout</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown> */}
-          </Nav>
-        </Row>
+        {/* </Nav> */}
+
+
         {/*<AppAsideToggler className="d-lg-none" mobile />*/}
       </React.Fragment>
     );

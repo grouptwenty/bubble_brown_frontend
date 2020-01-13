@@ -6,7 +6,11 @@ import swal from 'sweetalert';
 import GOBALS from '../../GOBALS'
 import FacebookLogin from 'react-facebook-login';
 import CustomerModel from '../../models/CustomerModel'
+import useLiff, { LiffData, Liff, LineProfile } from 'react-liff-hooks';
+import { OAuth } from "oauthio-web";
 const customer_model = new CustomerModel
+
+
 class loginView extends Component {
     constructor(props) {
         super(props);
@@ -16,6 +20,7 @@ class loginView extends Component {
             refresh: false
         };
         this.renderPage = this.renderPage.bind(this);
+        this.renderLineButtonPage = this.renderLineButtonPage.bind(this);
     }
 
 
@@ -25,14 +30,47 @@ class loginView extends Component {
         this.setState({
             customer_data: customer_data
         })
-
+        OAuth.initialize("HBPP7MOsssNFYnKdbu9qyPT0Fyo");
     }
 
+    Auth = () => {
+        OAuth.initialize("HBPP7MOsssNFYnKdbu9qyPT0Fyo");
+        OAuth.popup("line")
+            .done(res => {
+                console.log("resssssssss", res);
+                this.setState({
+                    customer_data_line: res
+                })
+            })
+            .fail(err => {
+            });
+
+
+    };
+
+    renderLineButtonPage() {
+        var login_or_profile = []
+        if (this.state.customer_data != undefined) {
+            login_or_profile.push(
+                this.props.history.push('/profile/')
+            )
+
+        } else {
+            login_or_profile.push(
+                <div>สมัครสมาชิกกก
+                 <button onClick={this.Auth}
+                        className="btn btn-tw btn-block">
+                        Sign in with facebook
+                    </button>
+                </div>
+            )
+        } return login_or_profile;
+    }
     renderPage() {
         var login_or_profile = []
         if (this.state.customer_data != undefined) {
             login_or_profile.push(
-                <div><a>เป็นสมาชิกกก</a></div>
+                this.props.history.push('/profile/')
             )
 
         } else {
@@ -81,11 +119,13 @@ class loginView extends Component {
 
             }
 
-            localStorage.setItem('@customer_data', check_email.data)
+            localStorage.setItem('@customer_data', JSON.stringify(check_email.data))
             var update_customer = await customer_model.updateCustomerByCode(customer_data)
+            this.props.history.push('/profile/')
         } else {
             var insert_customer = await customer_model.insertCustomer(customer_data)
-            localStorage.setItem('@customer_data', check_email.data)
+            localStorage.setItem('@customer_data', JSON.stringify(check_email.data))
+            this.props.history.push('/profile/')
         }
         console.log("check_email ===> ", check_email);
     }
@@ -97,7 +137,7 @@ class loginView extends Component {
         return (
             <div className="animated fadeIn">
                 {this.renderPage()}
-
+                {this.renderLineButtonPage()}
             </div >
         )
     }
