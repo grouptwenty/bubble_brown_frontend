@@ -18,7 +18,10 @@ import GPSCalculateModel from '../../models/GPSCalculateModel'
 import PromotionModel from '../../models/PromotionModel'
 import PromotionUseModel from '../../models/PromotionUseModel'
 import { geolocated } from "react-geolocated";
+import AboutModel from '../../models/AboutModel'
 
+
+var about_model = new AboutModel;
 const menu_model = new MenuModel
 const menutype_model = new MenuTypeModel
 const order_model = new OrderModel
@@ -56,6 +59,7 @@ class HomeView extends Component {
         this.close = this.close.bind(this)
         // this.getMyLocation = this.getMyLocation.bind(this)
         this.showQR = this.showQR.bind(this)
+        this.renderBranch = this.renderBranch.bind(this)
     }
 
     async componentDidMount() {
@@ -82,6 +86,13 @@ class HomeView extends Component {
         var promotion_list = await promotion_model.getPromotionBy()
         this.setState({
             promotion_list: promotion_list.data,
+        })
+
+        var branch_list = await about_model.getAboutBy()
+        // console.log("branch_list", branch_list);
+    
+        this.setState({
+          branch_list: branch_list.data,
         })
 
     }
@@ -664,6 +675,20 @@ class HomeView extends Component {
         this.toggle()
     }
 
+    renderBranch() {
+
+        if (this.state.branch_list != undefined) {
+          var branch = []
+          for (var key in this.state.branch_list) {
+            branch.push(
+                <option value={this.state.branch_list[key].about_code}>{this.state.branch_list[key].about_name_th}</option>
+            )
+          }
+          return branch;
+        }
+      }
+    
+
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
         const previewStyle = {
@@ -684,11 +709,19 @@ class HomeView extends Component {
                     </Col>
                     <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
                         <Row style={{ padding: '2%' }}>
-                            <Col lg="3">
+                            <Col lg="6">
                                 <FormGroup>
                                     <Input type="select" id="order_service" name="order_service" class="form-control" >
                                         <option value="ทานที่ร้าน">ทานที่ร้าน</option>
                                         <option value="สั่งกลับบ้าน">สั่งกลับบ้าน</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                            <Col lg="3">
+                                <FormGroup>
+                                    <Input type="select" id="order_service" name="order_service" class="form-control" >
+                                        <option value="สาขา">สาขา</option>
+                                      {this.renderBranch()}
                                     </Input>
                                 </FormGroup>
                             </Col>
