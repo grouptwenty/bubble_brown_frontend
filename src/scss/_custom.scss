@@ -12,15 +12,13 @@ body {
 .container-fluid{
   height: calc(100vh - 94px);
 }
-// .kep-login-facebook {
-//   width: 100%;
-//   height: 20px;
-//   justify-content: center;
-//   background-color: #4267b2; 
-//   color: white;
-//    border-radius: 20px;
-//     border-width: 1px;
-// }
+.title-menu {
+  padding-left: 12px;
+  font-size: 18px;
+  padding-top: 12px;
+  color: #777777;
+}
+
 @media (min-width: 992px)
         {
         html:not([dir="rtl"]) 
@@ -51,11 +49,140 @@ body {
       margin: 1.25rem auto;
   }
 }
-.app-header {
-  height: 95px;
-  background-color: #f8f8f8;
-  border-color: #e7e7e7;
+
+@media only screen and (max-width: 600px) {
+  
+
 }
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 320px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 12px;
+    padding-top: 12px;
+    color: #777777;
+    font-weight: bold;
+  }
+
+
+}
+@media only screen and (min-width: 360px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 12px;
+    padding-top: 12px;
+    color: #777777;
+  }
+
+
+}
+@media only screen and (min-width: 420px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 14px;
+    padding-top: 12px;
+    color: #777777;
+  }
+
+
+}
+@media only screen and (min-width: 480px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 18px;
+    padding-top: 12px;
+    color: #777777;
+  }
+
+}
+@media only screen and (min-width: 600px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+  }
+
+  .title-menu {
+    padding-left: 12px;
+    font-size: 18px;
+    padding-top: 12px;
+    color: #777777;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 18px;
+    padding-top: 12px;
+    color: #777777;
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .app-header {
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 18px;
+    padding-top: 12px;
+    color: #777777;
+  }
+
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .app-header {
+    height: 95px ;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+  }
+  .title-menu {
+    padding-left: 12px;
+    font-size: 18px;
+    padding-top: 12px;
+    color: #777777;
+  }
+  
+}
+
+
 .app-body {
   margin-top: 95px !important;
 }
@@ -64,12 +191,6 @@ body {
 }
 
 
-.title-menu {
-  padding-left: 12px;
-  font-size: 18px;
-  padding-top: 12px;
-  color: #777777;
-}
 
 .sidebar .nav-link:hover {
   color: #fff;

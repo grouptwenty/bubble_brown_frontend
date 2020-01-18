@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { saveStateLogout } from '../../_helpers';
 import MenuComponent from './Menu';
 import FacebookLogin from 'react-facebook-login';
-// import { store } from '../../_helpers';
+import { Fab, Action, } from 'react-tiny-fab';
+import 'react-tiny-fab/dist/styles.css';
+
 import { Container as Container1, Button, Link } from 'react-floating-action-button'
 import {
   AppAside,
@@ -69,6 +71,10 @@ class DefaultLayout extends Component {
     this.props.history.push('/login_customer/')
   }
 
+  Order() {
+    this.props.history.push('/user/')
+  }
+
 
 
 
@@ -126,15 +132,48 @@ class DefaultLayout extends Component {
                   <Redirect from="/" to="/dashboard" />
                 </Switch>
               </Suspense>
-              <Container1>
-
+              {/* <Container1>
+                <Link href="#"
+                  tooltip="Create note link"
+                  icon="far fa-sticky-note" />
+                <Link href="/login_customer/"
+                  tooltip="Add user link"
+                  icon="fa fa-user-plus"
+                />
                 <Button
                   tooltip="The big plus button!"
                   icon="fa fa-user-plus"
                   rotate={true}
                   onClick={this.CustomerlogIn.bind(this)}
                 />
-              </Container1>
+              </Container1> */}
+
+              <Fab 
+              text="เลือก"
+              icon={<i className="fa fa-plus" />}
+              mainButtonStyles={{ backgroundColor: '#9C640C', }}    
+                     >
+             
+               
+                <Action
+                  text="สั่งอาหาร"
+                  style={{backgroundColor:'#B38D4D'}}
+                  onClick={this.Order.bind(this)}
+                >
+                  <i className="fa fa-cart-plus" />
+                </Action>
+
+                <Action
+                  text="สมัครสมาชิก"
+                  onClick={this.CustomerlogIn.bind(this)}
+                  style={{backgroundColor:'#B38D4D'}}
+                >
+                  <i className="fa fa-user-plus" />
+                </Action>
+
+              </Fab>
+
+
             </Container>
 
 

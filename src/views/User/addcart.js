@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import { Button, Table, Card, Pagination, PaginationLink, PaginationItem, CardHeader, Col, Row, Container } from 'reactstrap';
 // import { Col, Row, Container, Card, CardImg, CardText, CardBody, CardTitle, Button, Label } from 'reactstrap';
-import { Col, Row, CardHeader, Card, CardImg, CardText, CardBody, FormGroup, CardTitle, Button, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter, CardFooter } from 'reactstrap';
+import { Col, Row, CardHeader, Card, CardImg, CardText, CardBody, FormGroup, CardTitle, Button, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
 import swal from 'sweetalert';
@@ -62,7 +62,6 @@ class HomeView extends Component {
         // this.getMyLocation = this.getMyLocation.bind(this)
         this.showQR = this.showQR.bind(this)
         this.renderBranch = this.renderBranch.bind(this)
-        // this.hightlightMenu = this.hightlightMenu.bind(this)
     }
 
     handleTextChange(e) {
@@ -78,7 +77,7 @@ class HomeView extends Component {
 
 
     async componentDidMount() {
-
+       
         const pusher = new Pusher('def17c9634c093c2935d', {
             cluster: 'ap1',
             encrypted: true
@@ -245,14 +244,12 @@ class HomeView extends Component {
     }
 
     deleteItemButton(data) {
-        var name = data.menu_name;
-        var price = data.menu_price;
-        var code = data.menu_code;
+        var name = data.name;
+        var price = data.price;
+        var code = data.code;
         var type = data.menu_type_id;
         this.deleteItem(name, price, code, 1, type)
     }
-
-
 
     addItemTocart(name, price, code, count, type) {
         for (var item in cart) {
@@ -278,16 +275,12 @@ class HomeView extends Component {
     }
 
     deleteItem(name, price, code, count, type) {
-
         for (var item in cart) {
             if (cart[item].code === code) {
                 cart[item].count--;
                 if (cart[item].count === 0) {
                     cart.splice(item, 1);
-
-                    console.log("item", item);
                 }
-
                 this.setState({
                     cart: cart
                 })
@@ -296,33 +289,22 @@ class HomeView extends Component {
         }
     }
 
-    rendercart(menu) {
-        var cart_list = []
+    rendercart() {
         if (this.state.cart != undefined) {
-
+            var cart_list = []
             for (let i = 0; i < this.state.cart.length; i++) {
-                if (menu.menu_code == this.state.cart[i].code) {
-                    cart_list.push(
-
-                        <Col lg="4" md="4" sm="4" xs="4" style={{ paddingTop: '5px' }}><div>{this.state.cart[i].count}</div></Col>
-
-
-                    )
-                    break;
-                }
-            }
-            console.log('cart_list', cart_list);
-
-            if (cart_list.length == 0) {
                 cart_list.push(
-                    <Col lg="4" md="4" sm="4" xs="4" style={{ paddingTop: '5px' }}><div>0</div></Col>
+                    <div>
+                        <Row >
+                            <Col lg="4" style={{ paddingTop: '5px' }}><div>{this.state.cart[i].name}</div></Col>
+                            <Col lg="4" style={{ paddingTop: '5px', textAlign: 'center' }}><div>{this.state.cart[i].price}</div></Col>
+
+                            <Col lg="4" style={{ paddingTop: '5px', textAlign: 'center' }}><Button onClick={this.deleteItemButton.bind(this, this.state.cart[i])}> - </Button>{this.state.cart[i].count}<Button onClick={this.addItemButton.bind(this, this.state.cart[i])}> + </Button></Col>
+                        </Row>
+                        <hr />
+                    </div>
                 )
             }
-            return cart_list;
-        } else {
-            cart_list.push(
-                <Col lg="4" md="4" sm="4" xs="4" style={{ paddingTop: '5px' }}><div>0</div></Col>
-            )
             return cart_list;
         }
     }
@@ -333,26 +315,11 @@ class HomeView extends Component {
             var menulist = []
             for (let i = 0; i < this.state.menu_list.length; i++) {
                 menulist.push(
-                    <Col lg="3" md="" sm="6" xs="12">
-                        <Card style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]) }}>
-                            {/* <CardHeader>
-                                <Button onClick={this.deleteItemMenu.bind(this, this.state.menu_list[i])}>ลบรายการ</Button>
-                            </CardHeader> */}
+                    <Col lg="4">
+                        <Card onClick={this.addItem.bind(this, this.state.menu_list[i])}>
                             <CardBody>
                                 <CardTitle><label >{this.state.menu_list[i].menu_name}</label> </CardTitle>
                             </CardBody>
-                            <CardFooter style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]) }}>
-                                <Row >
-
-                                    <Col lg="4" sm="4" xs="4" style={{ paddingTop: '5px', textAlign: 'center' }}><div>{this.state.menu_list[i].menu_price}</div></Col>
-
-                                    <Col lg="8" sm="8" xs="8" style={{ paddingTop: '5px', textAlign: 'center' }}>
-                                        <Row >
-                                            <Button onClick={this.deleteItemButton.bind(this, this.state.menu_list[i])}> - </Button>{this.rendercart(this.state.menu_list[i])}<Button onClick={this.addItem.bind(this, this.state.menu_list[i])} > + </Button>
-                                        </Row>
-                                    </Col>
-                                </Row>
-                            </CardFooter>
                         </Card>
                     </Col>
                 )
@@ -607,7 +574,6 @@ class HomeView extends Component {
         if (this.state.promotion != undefined) {
             var promotion_list = []
             promotion_list.push(
-
                 <Col>
                     <div>
                         <label style={{ margin: '15px' }}>
@@ -627,10 +593,10 @@ class HomeView extends Component {
             var sumtotal = this.sumtotal()
             order_total.push(
                 <Row>
-                    <Col md="6" sm="6" xs="8" lg="8" >
+                    <Col lg="8" style={{ paddingTop: '30px' }}>
                         <label>ราคารวม</label>
                     </Col>
-                    <Col md="6" sm="6" xs="4" lg="4" style={{ textAlign: 'center',}}>
+                    <Col lg="4" style={{ textAlign: 'center', paddingTop: '30px' }}>
                         <label>{sumtotal.sum_price}</label>
                     </Col>
                 </Row>
@@ -785,14 +751,7 @@ class HomeView extends Component {
             return branch;
         }
     }
-    hightlightMenu(menu) {
-        for (var key in this.state.cart) {
-            if (this.state.cart[key].code == menu.menu_code) {
-                return 'rgba(0,255,0,0.3)'
-            }
-        }
-        return 'transparent'
-    }
+
 
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
@@ -804,9 +763,9 @@ class HomeView extends Component {
         return (
             <div>
                 <Row style={{ minWidth: '100%', height: '100%', minHeight: '80vh' }}>
-                    <Col lg="12" >
-                        <Row style={{ minWidth: '100%', paddingTop: '10px' }}>
-                            <Col md="6" sm="6" xs="12" lg="3">
+                    <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
+                        <Row style={{ minWidth: '100%' }}>
+                            <Col lg="3">
                                 <FormGroup>
                                     <Input type="select" id="about_code" name="about_code" class="form-control" onChange={this.componentDidMount.bind(this)}>
                                         <option value="สาขา">สาขา</option>
@@ -815,61 +774,118 @@ class HomeView extends Component {
                                 </FormGroup>
                             </Col>
                         </Row>
-                        <Row style={{ minWidth: '100%', paddingTop: '10px' }}>
-                            <Col md="6" sm="6" xs="12" lg="3">
-                                {this.rendertotal()}
-                            </Col>
-                        </Row>
-                        <Row style={{ minWidth: '100%', paddingBottom: '20px' }}>
-                            <Col md="6" sm="6" xs="12" lg="3">
-                                <hr />
-                                <Row>
-
-                                    <Col md="4" sm="2" xs="3" lg="2">
-                                        <div style={{ fontSize: '13px' }}>โปรโมชั่น </div>
-                                    </Col>
-                                    <Col md="8" sm="10" xs="9" lg="4">
-                                        <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
-                                    </Col>
-                                </Row>
-
-                                {this.renderpromotion()}
-
-                                <Row style={{ textAlign: 'right', justifyContent: 'end' }}>
-                                    <Col>
-
-                                        {this.rendertotal()}
-
-                                        {this.state.cart != undefined && this.state.cart != "" ?
-                                            <Row style={{ textAlign: 'right' }}>
-                                                <Col lg='12'>
-                                                    <div>
-                                                        {this.state.order_code != undefined ?
-                                                            <div>
-                                                                <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
-                                                                <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
-                                                            </div>
-                                                            : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
-                                                        }
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                            : ''}
-                                    </Col>
-                                </Row>
-
-                            </Col>
-                        </Row>
                         <Row style={{ minWidth: '100%' }}>
                             {this.renderMenuType()}
                         </Row>
-                        <Row className="vc" ref="iScroll" style={{ height: "510px", overflow: "auto", paddingTop: '20px' }}>
+                        <Row style={{ overflowY: 'scroll', paddingTop: '20px' }}>
                             {this.renderMenuby()}
                         </Row>
                     </Col>
+                    <Col lg="6" style={{ borderStyle: 'solid', borderWidth: 1 }}>
+                        <Row style={{ padding: '2%' }}>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <Input type="select" id="order_service" name="order_service" class="form-control" >
+                                        <option value="ทานที่ร้าน">ทานที่ร้าน</option>
+                                        <option value="สั่งกลับบ้าน">สั่งกลับบ้าน</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
 
+                        </Row>
+                        <Row >
+                            <div style={{ paddingTop: '10px', paddingLeft: '10px', paddingBottom: '30px' }}> รายการอาหาร</div>
+                        </Row>
+
+                        {this.rendercart()}
+
+                        <Row>
+                            <Col lg="2">
+                                <div style={{ paddingTop: '10px', paddingLeft: '10px', paddingBottom: '30px' }}>CODE </div>
+                            </Col>
+                            <Col lg="4">
+                                <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
+                            </Col>
+                        </Row>
+
+                        {this.renderpromotion()}
+
+                        <Row style={{ textAlign: 'right', justifyContent: 'end' }}>
+                            <Col>
+
+                                {this.rendertotal()}
+
+                                {this.state.cart != undefined && this.state.cart != "" ?
+                                    <Row style={{ textAlign: 'right' }}>
+                                        <Col lg='12'>
+                                            <div>
+                                                {this.state.order_code != undefined ?
+                                                    <div>
+                                                        <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
+                                                        <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+                                                    </div>
+                                                    : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
+                                                }
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                    : ''}
+                            </Col>
+                        </Row>
+                    </Col>
                 </Row>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
+                    <ModalHeader toggle={this.toggle} close={closeBtn}>Order : {this.state.order_code_list}</ModalHeader>
+                    <ModalBody >
+                        <Row>
+                            <Col>
+                                <Row>
+                                    <Col lg="4">
+                                        <Label> รายการ </Label>
+                                    </Col>
+                                    <Col lg="4" style={{ textAlign: 'center' }}>
+                                        <Label> จำนวน </Label>
+                                    </Col>
+                                    <Col lg="4" style={{ textAlign: 'center' }}>
+                                        <Label> ราคา </Label>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
 
+                        {this.renderOrderList()}
+
+                        <Row>
+                            <Col lg="4"></Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label>ราคารวมมม</Label>
+                            </Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label className="text_head"> {this.state.sum_price} </Label>
+                            </Col>
+                        </Row >
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.toggle} style={{ width: 100, height: 40 }}>OK</Button>
+                    </ModalFooter>
+                </Modal>
+                <Modal isOpen={this.state.modal1} toggle={this.toggle1} size="lg">
+                    <ModalBody >
+                        <div>
+                            <QrReader
+                                delay={this.state.delay}
+                                style={previewStyle}
+                                onError={this.handleError}
+                                onScan={this.handleScan}
+                            />
+                            <p>{this.state.result}</p>
+                        </div>
+                    </ModalBody >
+                    <ModalFooter>
+                        <Button color="cancel" onClick={this.close} style={{ width: 100, height: 40 }}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
+                <Button onClick={this.handleTextChange.bind(this)}><a>Push Button</a></Button>
             </div>
         )
     }

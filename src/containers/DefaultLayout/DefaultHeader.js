@@ -33,7 +33,7 @@ class DefaultHeader extends Component {
 
     return (
       <React.Fragment>
-        <AppSidebarToggler className="d-lg-none" display="md" mobile />
+        {/* <AppSidebarToggler className="d-lg-none" display="md" mobile /> */}
         {/* <NavLink to="/dashboard"  > */}
 
         {/* <AppNavbarBrand
@@ -46,22 +46,22 @@ class DefaultHeader extends Component {
  {/* {this.state.customer_data != undefined || this.state.customer_data != null ?      */}
         <Row style={{ width: '100%', textAlign: 'center' }}>
          
-          <Col md="3">
+          <Col md="3" sm="3" xs="3">
             <NavLink to="/User"  >
               <strong class="title-menu">สั่งอาหาร</strong>
             </NavLink>
           </Col>
-          <Col md="3">
+          <Col md="3" sm="3" xs="3">
             <NavLink to="/Booking" >
               <strong class="title-menu">จองโต๊ะ</strong>
             </NavLink>
           </Col>
-          <Col md="3">
+          <Col md="3" sm="3" xs="3">
             <NavLink to="/Promotion" >
               <strong class="title-menu">โปรโมชั่น</strong>
             </NavLink>
           </Col>
-          <Col md="3">
+          <Col md="3" sm="3" xs="3">
             <NavLink to="/Profile" >
               <strong class="title-menu">โปรไฟล์</strong>
             </NavLink>
