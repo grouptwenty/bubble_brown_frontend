@@ -8,6 +8,9 @@ import swal from 'sweetalert';
 import GOBALS from '../../GOBALS'
 import ImgDefault from '../../assets/img/default-user.png'
 import QrReader from 'react-qr-scanner'
+import moment from 'moment'
+import axios from 'axios';
+import Pusher from 'pusher-js';
 
 import MenuModel from '../../models/MenuModel'
 import MenuTypeModel from '../../models/MenuTypeModel'
@@ -19,7 +22,6 @@ import PromotionModel from '../../models/PromotionModel'
 import PromotionUseModel from '../../models/PromotionUseModel'
 import { geolocated } from "react-geolocated";
 import AboutModel from '../../models/AboutModel'
-
 
 var about_model = new AboutModel;
 const menu_model = new MenuModel
@@ -62,7 +64,33 @@ class HomeView extends Component {
         this.renderBranch = this.renderBranch.bind(this)
     }
 
+    handleTextChange(e) {
+        var about_code = document.getElementById('about_code').value
+        const payload = {
+            about_code: about_code,
+            message: 'new order',
+        };
+        axios.post('http://localhost:5002/message', payload);
+
+
+    }
+
+
     async componentDidMount() {
+
+        const pusher = new Pusher('def17c9634c093c2935d', {
+            cluster: 'ap1',
+            encrypted: true
+        });
+        const channel = pusher.subscribe('chat');
+        channel.bind('message', data => {
+            //   this.setState({ chats: [...this.state.chats, data], test: '' });
+            //   this.componentDidMount()
+            console.log("data>>>", data);
+
+        });
+        this.handleTextChange = this.handleTextChange.bind(this);
+
         var about_code = document.getElementById('about_code').value
         if (about_code != null && about_code != undefined) {
             var menutype_list = await menutype_model.getMenuTypeBy({ "about_code": about_code })
@@ -358,7 +386,9 @@ class HomeView extends Component {
         var order = []
         const max_code = await order_model.getOrderMaxCode()//province data
         var order_code = 'OD' + max_code.data.order_code_max
-        // console.log(max_code);
+        var order_date = moment(new Date()).format('YYYY-MM-DD');
+        var order_time = moment(new Date()).format('HH:mm:ss');
+        var about_code = document.getElementById('about_code').value
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
@@ -374,7 +404,10 @@ class HomeView extends Component {
                 'order_code': order_code,
                 'promotion_code': this.state.promotion.promotion_code,
                 'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
+                'amount': total_sum.sum_price,
+                'order_date': order_date,
+                'order_time': order_time,
+                'about_code': about_code
             }
         } else {
             order = {
@@ -385,7 +418,10 @@ class HomeView extends Component {
                 'order_code': order_code,
                 'promotion_code': '',
                 'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
+                'amount': total_sum.sum_price,
+                'order_date': order_date,
+                'order_time': order_time,
+                'about_code': about_code
             }
         }
         // console.log("order", order);
@@ -430,6 +466,7 @@ class HomeView extends Component {
             order_code: order_code,
             sum_price: total_sum.sum_price
         })
+        this.handleTextChange()
 
     }
 
@@ -439,10 +476,13 @@ class HomeView extends Component {
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
         var order_service = document.getElementById('order_service').value
-        // console.log("order_service", order_service);
+        var order_date = moment(new Date()).format('YYYY-MM-DD');
+        var order_time = moment(new Date()).format('HH:mm:ss');
         var total_sum = this.sumtotal();
+        const revised_num = await order_model.getOrderRevisedNum(this.state.order_code)
         var order
-        console.log("this.state.promotion :", this.state.promotion);
+        var about_code = document.getElementById('about_code').value
+
         if (this.state.promotion != undefined) {
             order = {
                 'order_service': order_service,
@@ -451,7 +491,12 @@ class HomeView extends Component {
                 'order_code': this.state.order_code,
                 'promotion_code': this.state.promotion.promotion_code,
                 'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
+                'amount': total_sum.sum_price,
+                'order_date': order_date,
+                'order_time': order_time,
+                'revised_num': revised_num.data.revised_num_max,
+                'about_code': about_code
+
             }
         } else {
             order = {
@@ -461,11 +506,18 @@ class HomeView extends Component {
                 'order_code': this.state.order_code,
                 'promotion_code': '',
                 'order_total_price': total_sum.total,
-                'amount': total_sum.sum_price
+                'amount': total_sum.sum_price,
+                'order_date': order_date,
+                'order_time': order_time,
+                'revised_num': revised_num.data.revised_num_max,
+                'about_code': about_code
             }
         }
 
-        const result1 = await order_model.updateOrderByCode(order)
+        const update_revised = await order_model.updateRevisedByCode(order)
+        const insert = await order_model.insertOrder(order)
+        const update_revised_list = await order_list_model.updateRevisedListByCode(order)
+
         if (this.state.promotion != undefined) {
             var promotion_use = {
                 'customer_code': "CUS0001",
@@ -477,9 +529,10 @@ class HomeView extends Component {
             }
             const res = await promotion_use_model.updatePromotionUseByCode(promotion_use)
         }
+
         const res2 = await promotion_use_model.insertPromotionUse(promotion_use)
-        const result2 = await order_list_model.deleteOrderListByCode({ 'order_code': this.state.order_code })
-        console.log("result2", result2);
+
+
 
         for (var key in this.state.cart) {
             var order_list = {
@@ -489,8 +542,10 @@ class HomeView extends Component {
                 order_list_name: this.state.cart[key].name,
                 order_list_price_qty: this.state.cart[key].price,
                 order_list_price_sum_qty: this.state.cart[key].count * this.state.cart[key].price,
-                order_list_price_sum: total_sum.sum_price
+                order_list_price_sum: total_sum.sum_price,
+                revised_num: revised_num.data.revised_num_max
             }
+
             const arr = await order_list_model.insertOrderList(order_list)
             if (order_list != undefined) {
                 swal({
@@ -501,6 +556,7 @@ class HomeView extends Component {
                 });
             }
         }
+        this.handleTextChange()
     }
 
     async getPromotion() {
@@ -826,6 +882,7 @@ class HomeView extends Component {
                         <Button color="cancel" onClick={this.close} style={{ width: 100, height: 40 }}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
+                <Button onClick={this.handleTextChange.bind(this)}><a>Push Button</a></Button>
             </div>
         )
     }

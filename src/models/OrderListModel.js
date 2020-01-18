@@ -114,27 +114,50 @@ export default class OrderListModel {
             });
     }
 
-    // async getUserByCode(data) {
-    //     return fetch(GOBALS.URL + '/user/getUserByCode', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({user_code:data})
-    //     }).then((response) => response.json())
-    //         .then((responseJson) => {
+    async updateRevisedListByCode(data) {
+        return fetch(GOBALS.URL + '/order_list/updateRevisedListByCode', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
 
-    //             return responseJson;
-    //         }).catch((error) => {
-    //             return {
-    //                 data: [],
-    //                 error: error,
-    //                 query_result: false,
-    //                 server_result:false
-    //             };
-    //         });
-    // }
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result:false
+                };
+            });
+    }
+    
+    async getOrderListOldBy(data) {
+        return fetch(GOBALS.URL + '/order_list/getOrderListOldBy', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result:false
+                };
+            });
+    }
+    
     
 
 }
