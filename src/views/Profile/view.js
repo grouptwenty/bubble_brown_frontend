@@ -30,7 +30,7 @@ class ProfileView extends Component {
 
 
         var customer_data = await localStorage.getItem('@customer_data')
- console.log("customer_data", customer_data);
+//  console.log("customer_data", customer_data);
         // var customer = await customer_model.getCustomerByEmail({"customer_email":customer_data.customer_email})
         this.setState({
             customer_data: JSON.parse(customer_data)
@@ -49,6 +49,7 @@ class ProfileView extends Component {
         localStorage.clear();
         // this.props.setUser([])
         saveStateLogout()
+        this.componentDidMount()
         this.props.history.push('/login_customer')
       }
 

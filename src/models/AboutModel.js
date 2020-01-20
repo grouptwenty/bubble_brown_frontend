@@ -13,7 +13,7 @@ export default class AboutModel {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ detail_id: data })
+            body: JSON.stringify({ about_code: data })
         }).then((response) => response.json())
             .then((responseJson) => {
 
@@ -50,8 +50,8 @@ export default class AboutModel {
             });
     }
 
-    async updateAboutBy(data) {
-        return fetch(GOBALS.URL + '/about/updateAboutBy', {
+    async getAboutByKey(data) {
+        return fetch(GOBALS.URL + '/about/getAboutByKey', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -72,5 +72,5 @@ export default class AboutModel {
             });
     }
 
-
+   
 }

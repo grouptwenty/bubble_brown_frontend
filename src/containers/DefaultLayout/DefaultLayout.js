@@ -56,7 +56,13 @@ class DefaultLayout extends Component {
 
 
   async componentDidMount() {
+    var customer_data = await localStorage.getItem('@customer_data')
+    console.log("customer_data>>>>>>>>>>.", customer_data);
+    // var customer = await customer_model.getCustomerByEmail({"customer_email":customer_data.customer_email})
+    this.setState({
+      customer_data: JSON.parse(customer_data)
 
+    })
   }
 
   // toggle_login() {
@@ -92,9 +98,11 @@ class DefaultLayout extends Component {
   render() {
 
     return (
-      <div className="app">
+      <div className="app"> 
+ 
         <AppHeader fixed>
           <Suspense fallback={this.loading()}>
+
             <DefaultHeader onLogout={e => this.signOut(e)} />
           </Suspense>
         </AppHeader>
@@ -129,7 +137,7 @@ class DefaultLayout extends Component {
                   })}
 
 
-                  <Redirect from="/" to="/dashboard" />
+                  <Redirect from="/" to="/user" />
                 </Switch>
               </Suspense>
               {/* <Container1>
@@ -147,32 +155,60 @@ class DefaultLayout extends Component {
                   onClick={this.CustomerlogIn.bind(this)}
                 />
               </Container1> */}
-
-              <Fab 
-              text="เลือก"
-              icon={<i className="fa fa-plus" />}
-              mainButtonStyles={{ backgroundColor: '#9C640C', }}    
-                     >
-             
-               
-                <Action
-                  text="สั่งอาหาร"
-                  style={{backgroundColor:'#B38D4D'}}
-                  onClick={this.Order.bind(this)}
+              {this.state.customer_data != undefined ?
+                <Fab
+                  text="เลือก"
+                  icon={<i className="fa fa-plus" />}
+                  mainButtonStyles={{ backgroundColor: '#9C640C', }}
                 >
-                  <i className="fa fa-cart-plus" />
-                </Action>
 
-                <Action
-                  text="สมัครสมาชิก"
-                  onClick={this.CustomerlogIn.bind(this)}
-                  style={{backgroundColor:'#B38D4D'}}
+
+                  <Action
+                    text="ออเดอร์"
+                    style={{ backgroundColor: '#B38D4D' }}
+                    onClick={this.Order.bind(this)}
+                  >
+                    <i className="fa fa-cart-plus" />
+                  </Action>
+
+                  <Action
+                    text="ประวัติส่วนตัว"
+                    onClick={this.CustomerlogIn.bind(this)}
+                    style={{ backgroundColor: '#B38D4D' }}
+                  >
+                    <i className="fa fa-user-plus" />
+                  </Action>
+
+                </Fab>
+                :
+                <Fab
+                  text="เลือก"
+                  icon={<i className="fa fa-plus" />}
+                  mainButtonStyles={{ backgroundColor: '#9C640C', }}
                 >
-                  <i className="fa fa-user-plus" />
-                </Action>
 
-              </Fab>
 
+                  <Action
+                    text="สั่งอาหาร"
+                    style={{ backgroundColor: '#B38D4D' }}
+                    onClick={this.Order.bind(this)}
+                  >
+                    <i className="fa fa-cart-plus" />
+                  </Action>
+
+                  <Action
+                    text="สมัครสมาชิก"
+                    onClick={this.CustomerlogIn.bind(this)}
+                    style={{ backgroundColor: '#B38D4D' }}
+                  >
+                    <i className="fa fa-user-plus" />
+                  </Action>
+
+                </Fab>
+
+
+
+              }
 
             </Container>
 

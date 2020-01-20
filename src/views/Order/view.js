@@ -61,12 +61,11 @@ class HomeView extends Component {
         this.close = this.close.bind(this)
         // this.getMyLocation = this.getMyLocation.bind(this)
         this.showQR = this.showQR.bind(this)
-        this.renderBranch = this.renderBranch.bind(this)
-        // this.hightlightMenu = this.hightlightMenu.bind(this)
+        this.renderBranchImg = this.renderBranchImg.bind(this)
     }
 
     handleTextChange(e) {
-        var about_code = document.getElementById('about_code').value
+        var about_code = this.props.match.params.code
         const payload = {
             about_code: about_code,
             message: 'new order',
@@ -78,6 +77,8 @@ class HomeView extends Component {
 
 
     async componentDidMount() {
+        const code = this.props.match.params.code
+        // console.log("codecodecode",code);
 
         const pusher = new Pusher('def17c9634c093c2935d', {
             cluster: 'ap1',
@@ -92,19 +93,31 @@ class HomeView extends Component {
         });
         this.handleTextChange = this.handleTextChange.bind(this);
 
-        var about_code = document.getElementById('about_code').value
-        if (about_code != null && about_code != undefined) {
-            var menutype_list = await menutype_model.getMenuTypeBy({ "about_code": about_code })
+        // var about_code = document.getElementById('about_code').value
+        // this.setState({
+        //     about_code: about_code
+        // })
+
+        // console.log("about_data>>>>>>>>>>55555",this.about_data.);
+
+        if (code != null && code != undefined) {
+            var about_data = await about_model.getAboutByCode(code)
+
+            this.setState({
+                about_data: about_data.data
+            })
+
+            var menutype_list = await menutype_model.getMenuTypeBy({ "about_code": code })
             this.setState({
                 menutype_list: menutype_list.data,
             })
 
-            var menulist = await menu_model.getMenuBy({ "about_code": about_code })
+            var menulist = await menu_model.getMenuBy({ "about_code": code })
             this.setState({
                 menulist: menulist.data
             })
 
-            var promotion_list = await promotion_model.getPromotionBy({ "about_code": about_code })
+            var promotion_list = await promotion_model.getPromotionBy({ "about_code": code })
             this.setState({
                 promotion_list: promotion_list.data,
             })
@@ -172,9 +185,9 @@ class HomeView extends Component {
     }
 
     async getMenuByCode(code) {
-        var about_code = document.getElementById('about_code').value
+        // var about_code = document.getElementById('about_code').value
         var arr = {}
-        arr['about_code'] = about_code
+        arr['about_code'] = this.props.match.params.code
         arr['menu_type_id'] = code
 
         var menu_list = await menu_model.getMenuByCode(arr)
@@ -333,7 +346,7 @@ class HomeView extends Component {
             var menulist = []
             for (let i = 0; i < this.state.menu_list.length; i++) {
                 menulist.push(
-                    <Col lg="3" md="" sm="6" xs="12">
+                    <Col lg="3" md="" sm="6" xs="12" style={{ paddingTop: '20px' }}>
                         <Card style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]) }}>
                             {/* <CardHeader>
                                 <Button onClick={this.deleteItemMenu.bind(this, this.state.menu_list[i])}>ลบรายการ</Button>
@@ -421,17 +434,17 @@ class HomeView extends Component {
         var order_code = 'OD' + max_code.data.order_code_max
         var order_date = moment(new Date()).format('YYYY-MM-DD');
         var order_time = moment(new Date()).format('HH:mm:ss');
-        var about_code = document.getElementById('about_code').value
+        // var about_code = document.getElementById('about_code').value
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
-        var order_service = document.getElementById('order_service').value
+        // var order_service = document.getElementById('order_service').value
         var total_sum = this.sumtotal()
         var order
         if (this.state.promotion != undefined) {
             order = {
                 'table_code': this.state.result,
-                'order_service': order_service,
+                // 'order_service': order_service,
                 'customer_code': 'CM001',
                 'order_date': toDay,
                 'order_code': order_code,
@@ -440,12 +453,12 @@ class HomeView extends Component {
                 'amount': total_sum.sum_price,
                 'order_date': order_date,
                 'order_time': order_time,
-                'about_code': about_code
+                'about_code': this.props.match.params.code
             }
         } else {
             order = {
                 'table_code': this.state.result,
-                'order_service': order_service,
+                // 'order_service': order_service,
                 'customer_code': 'CM001',
                 'order_date': toDay,
                 'order_code': order_code,
@@ -454,7 +467,7 @@ class HomeView extends Component {
                 'amount': total_sum.sum_price,
                 'order_date': order_date,
                 'order_time': order_time,
-                'about_code': about_code
+                'about_code': this.props.match.params.code
             }
         }
         // console.log("order", order);
@@ -508,17 +521,17 @@ class HomeView extends Component {
         const date_now = new Date();
         var toDay = date_now.getFullYear() + "" + (date_now.getMonth() + 1) + "" + date_now.getDate() + "" + date_now.getTime();
         const data = new FormData();
-        var order_service = document.getElementById('order_service').value
+        // var order_service = document.getElementById('order_service').value
         var order_date = moment(new Date()).format('YYYY-MM-DD');
         var order_time = moment(new Date()).format('HH:mm:ss');
         var total_sum = this.sumtotal();
         const revised_num = await order_model.getOrderRevisedNum(this.state.order_code)
         var order
-        var about_code = document.getElementById('about_code').value
+        // var about_code = document.getElementById('about_code').value
 
         if (this.state.promotion != undefined) {
             order = {
-                'order_service': order_service,
+                // 'order_service': order_service,
                 'customer_code': 'CM001',
                 'order_date': toDay,
                 'order_code': this.state.order_code,
@@ -528,12 +541,12 @@ class HomeView extends Component {
                 'order_date': order_date,
                 'order_time': order_time,
                 'revised_num': revised_num.data.revised_num_max,
-                'about_code': about_code
+                'about_code': this.props.match.params.code
 
             }
         } else {
             order = {
-                'order_service': order_service,
+                // 'order_service': order_service,
                 'customer_code': 'CM001',
                 'order_date': toDay,
                 'order_code': this.state.order_code,
@@ -543,7 +556,7 @@ class HomeView extends Component {
                 'order_date': order_date,
                 'order_time': order_time,
                 'revised_num': revised_num.data.revised_num_max,
-                'about_code': about_code
+                'about_code': this.props.match.params.code
             }
         }
 
@@ -609,11 +622,11 @@ class HomeView extends Component {
             promotion_list.push(
 
                 <Col>
-                    <div>
-                        <label style={{ margin: '15px' }}>
-                            {this.state.promotion.promotion_detail}
-                        </label>
-                    </div>
+
+                    <label style={{ color: '#239B56', marginTop: '20px' }}>
+                        {this.state.promotion.promotion_detail}
+                    </label>
+
                 </Col>
             )
 
@@ -627,11 +640,11 @@ class HomeView extends Component {
             var sumtotal = this.sumtotal()
             order_total.push(
                 <Row>
-                    <Col md="6" sm="6" xs="8" lg="8" >
+                    <Col md="6" sm="6" xs="8" lg="10" style={{ textAlign: 'end', }}>
                         <label>ราคารวม</label>
                     </Col>
-                    <Col md="6" sm="6" xs="4" lg="4" style={{ textAlign: 'center',}}>
-                        <label>{sumtotal.sum_price}</label>
+                    <Col md="6" sm="6" xs="4" lg="2" style={{ textAlign: 'center', }}>
+                        <label>{sumtotal.sum_price + ' ' + ' ' + 'บาท'}</label>
                     </Col>
                 </Row>
             )
@@ -773,18 +786,18 @@ class HomeView extends Component {
         this.toggle()
     }
 
-    renderBranch() {
+    // renderBranch() {
 
-        if (this.state.branch_list != undefined) {
-            var branch = []
-            for (var key in this.state.branch_list) {
-                branch.push(
-                    <option value={this.state.branch_list[key].about_code} >{this.state.branch_list[key].about_name_th}</option>
-                )
-            }
-            return branch;
-        }
-    }
+    //     if (this.state.branch_list != undefined) {
+    //         var branch = []
+    //         for (var key in this.state.branch_list) {
+    //             branch.push(
+    //                 <option value={this.state.branch_list[key].about_code} >{this.state.branch_list[key].about_name_th}</option>
+    //             )
+    //         }
+    //         return branch;
+    //     }
+    // }
     hightlightMenu(menu) {
         for (var key in this.state.cart) {
             if (this.state.cart[key].code == menu.menu_code) {
@@ -794,6 +807,18 @@ class HomeView extends Component {
         return 'transparent'
     }
 
+    renderBranchImg() {
+        if (this.state.about_data != undefined) {
+            var BranchImg = []
+            BranchImg.push(
+                <img style={{ width: '100%', height: '50%', display: 'block' }} src={GOBALS.URL_IMG + "about/" + this.state.about_data.about_img} />
+
+            )
+        } return BranchImg
+
+    }
+
+
     render() {
         const closeBtn = <button className="close" onClick={this.toggle}>&times;</button>;
         const previewStyle = {
@@ -801,76 +826,134 @@ class HomeView extends Component {
             width: '100%',
         }
 
+
+
         return (
-            <div>
+            <div>  {/* < Row style={{ minWidth: '100%', paddingTop: '20px' }}>
+                            <Col md="12" sm="12" xs="12" lg="12" > */}
+                {this.renderBranchImg()}
+                {/* </Col>
+                        </Row> */}
                 <Row style={{ minWidth: '100%', height: '100%', minHeight: '80vh' }}>
                     <Col lg="12" >
-                        <Row style={{ minWidth: '100%', paddingTop: '10px' }}>
-                            <Col md="6" sm="6" xs="12" lg="3">
-                                <FormGroup>
-                                    <Input type="select" id="about_code" name="about_code" class="form-control" onChange={this.componentDidMount.bind(this)}>
-                                        <option value="สาขา">สาขา</option>
-                                        {this.renderBranch()}
-                                    </Input>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row style={{ minWidth: '100%', paddingTop: '10px' }}>
-                            <Col md="6" sm="6" xs="12" lg="3">
-                                {this.rendertotal()}
-                            </Col>
-                        </Row>
-                        <Row style={{ minWidth: '100%', paddingBottom: '20px' }}>
-                            <Col md="6" sm="6" xs="12" lg="3">
-                                <hr />
-                                <Row>
 
-                                    <Col md="4" sm="2" xs="3" lg="2">
-                                        <div style={{ fontSize: '13px' }}>โปรโมชั่น </div>
-                                    </Col>
-                                    <Col md="8" sm="10" xs="9" lg="4">
-                                        <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
-                                    </Col>
-                                </Row>
-
-                                {this.renderpromotion()}
-
-                                <Row style={{ textAlign: 'right', justifyContent: 'end' }}>
-                                    <Col>
-
-                                        {this.rendertotal()}
-
-                                        {this.state.cart != undefined && this.state.cart != "" ?
-                                            <Row style={{ textAlign: 'right' }}>
-                                                <Col lg='12'>
-                                                    <div>
-                                                        {this.state.order_code != undefined ?
-                                                            <div>
-                                                                <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
-                                                                <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
-                                                            </div>
-                                                            : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
-                                                        }
-                                                    </div>
+                        {this.state.cart != null && this.state.cart != undefined ?
+                            <Row style={{ minWidth: '100%', paddingBottom: '20px' }}>
+                                <Col md="6" sm="6" xs="12" lg="12">
+                                    <hr />
+                                    <Row>
+                                        <Col md="4" sm="2" xs="3" lg="4">
+                                            <Row>
+                                                <Col md="4" sm="2" xs="3" lg="2">
+                                                    <div style={{ fontSize: '13px' }}>โปรโมชั่น </div>
+                                                </Col>
+                                                <Col md="8" sm="10" xs="9" lg="10">
+                                                    <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
                                                 </Col>
                                             </Row>
-                                            : ''}
-                                    </Col>
-                                </Row>
+                                            <Row>
+                                                <Col md="4" sm="2" xs="3" lg="2">
 
-                            </Col>
-                        </Row>
+                                                </Col>
+                                                <Col md="8" sm="10" xs="9" lg="10">
+                                                    {this.renderpromotion()}
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                        <Col md="4" sm="2" xs="3" lg="5">
+                                            {this.rendertotal()}
+                                        </Col>
+                                        <Col md="4" sm="2" xs="3" lg="3">
+                                            {this.state.cart != undefined && this.state.cart != "" ?
+                                                <Row style={{ textAlign: 'right' }}>
+                                                    <Col lg='12'>
+                                                        <div>
+                                                            {this.state.order_code != undefined ?
+                                                                <div>
+                                                                    <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
+                                                                    <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+                                                                </div>
+                                                                : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
+                                                            }
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                                : ''}
+                                        </Col>
+                                    </Row>
+                                    <hr />
+                                </Col>
+
+                            </Row>
+
+                            : ''}
+
+
                         <Row style={{ minWidth: '100%' }}>
                             {this.renderMenuType()}
                         </Row>
-                        <Row className="vc" ref="iScroll" style={{ height: "510px", overflow: "auto", paddingTop: '20px' }}>
+                        <Row >
                             {this.renderMenuby()}
                         </Row>
                     </Col>
 
                 </Row>
+               
+                   
+          
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
+                    <ModalHeader toggle={this.toggle} close={closeBtn}>Order : {this.state.order_code_list}</ModalHeader>
+                    <ModalBody >
+                        <Row>
+                            <Col>
+                                <Row>
+                                    <Col lg="4">
+                                        <Label> รายการ </Label>
+                                    </Col>
+                                    <Col lg="4" style={{ textAlign: 'center' }}>
+                                        <Label> จำนวน </Label>
+                                    </Col>
+                                    <Col lg="4" style={{ textAlign: 'center' }}>
+                                        <Label> ราคา </Label>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
 
-            </div>
+                        {this.renderOrderList()}
+
+                        <Row>
+                            <Col lg="4"></Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label>ราคารวมมม</Label>
+                            </Col>
+                            <Col lg="4" style={{ textAlign: 'center' }}>
+                                <Label className="text_head"> {this.state.sum_price} </Label>
+                            </Col>
+                        </Row >
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.toggle} style={{ width: 100, height: 40 }}>OK</Button>
+                    </ModalFooter>
+                </Modal>
+                <Modal isOpen={this.state.modal1} toggle={this.toggle1} size="lg">
+                    <ModalBody >
+                        <div>
+                            <QrReader
+                                delay={this.state.delay}
+                                style={previewStyle}
+                                onError={this.handleError}
+                                onScan={this.handleScan}
+                            />
+                            <p>{this.state.result}</p>
+                        </div>
+                    </ModalBody >
+                    <ModalFooter>
+                        <Button color="cancel" onClick={this.close} style={{ width: 100, height: 40 }}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
+
+            </div >
         )
     }
 }

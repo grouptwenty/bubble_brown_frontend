@@ -86,6 +86,7 @@
     "react-router-config": "^4.4.0-beta.8",
     "react-router-dom": "~4.3.1",
     "react-scripts": "^2.1.8",
+    "react-search-box": "^2.0.2",
     "react-select": "^2.0.0-beta.7",
     "react-table": "6.5.3",
     "react-test-renderer": "^16.8.5",
@@ -93,6 +94,7 @@
     "react-toastify": "^5.2.1",
     "reactstrap": "^7.1.0",
     "redux": "3.7.2",
+    "semantic-ui-react": "^0.88.2",
     "simple-line-icons": "^2.4.1",
     "socket.io-client": "^2.2.0",
     "sweetalert": "^2.1.2"

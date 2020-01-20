@@ -22,8 +22,10 @@ class DefaultHeader extends Component {
   async componentDidMount() {
     var customer_data = await localStorage.getItem('@customer_data')
     this.setState({
-      customer_data: customer_data
+      customer_data:  JSON.parse(customer_data)
     })
+    console.log(customer_data);
+    
   }
 
   render() {
@@ -43,11 +45,11 @@ class DefaultHeader extends Component {
         {/* </NavLink> */}
         {/* <AppSidebarToggler className="d-md-down-none" display="lg" /> */}
         {/* <img src="/icon.png" height={60} width={60}/> */}
- {/* {this.state.customer_data != undefined || this.state.customer_data != null ?      */}
+
         <Row style={{ width: '100%', textAlign: 'center' }}>
-         
+
           <Col md="3" sm="3" xs="3">
-            <NavLink to="/User"  >
+            <NavLink to="/Branch"  >
               <strong class="title-menu">สั่งอาหาร</strong>
             </NavLink>
           </Col>
@@ -61,14 +63,15 @@ class DefaultHeader extends Component {
               <strong class="title-menu">โปรโมชั่น</strong>
             </NavLink>
           </Col>
-          <Col md="3" sm="3" xs="3">
-            <NavLink to="/Profile" >
-              <strong class="title-menu">โปรไฟล์</strong>
-            </NavLink>
-          </Col>
+         
+            <Col md="3" sm="3" xs="3">
+              <NavLink to="/Profile" >
+                <strong class="title-menu">โปรไฟล์</strong>
+              </NavLink>
+            </Col>
+            
         </Row>
-{/* :""
-} */}
+
         {/* <input type="hidden" id="sub_id" value={this.props.user.admin_code} /> */}
         {/* <Nav className="ml-auto" navbar> */}
         {/* <p class="name-project">Suranaree Journal of Science and Techonilogy</p> */}
