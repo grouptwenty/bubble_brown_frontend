@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-// import { Button, Table, Card, Pagination, PaginationLink, PaginationItem, CardHeader, Col, Row, Container } from 'reactstrap';
-// import { Col, Row, Container, Card, CardImg, CardText, CardBody, CardTitle, Button, Label } from 'reactstrap';
+import { MDBContainer, MDBRow, MDBCol, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBIcon } from "mdbreact";
 import { Col, Row, CardHeader, Card, CardImg, CardText, CardBody, FormGroup, CardTitle, Button, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter, CardFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
@@ -43,6 +42,7 @@ class HomeView extends Component {
             order_list: [],
             refresh: false,
             delay: 400,
+            activeItem: "1",
             result: 'No result',
         };
         this.renderMenuby = this.renderMenuby.bind(this);
@@ -74,11 +74,9 @@ class HomeView extends Component {
 
 
     }
-
-
     async componentDidMount() {
         const code = this.props.match.params.code
-        // console.log("codecodecode",code);
+        console.log("codecodecode", code);
 
         const pusher = new Pusher('def17c9634c093c2935d', {
             cluster: 'ap1',
@@ -93,39 +91,43 @@ class HomeView extends Component {
         });
         this.handleTextChange = this.handleTextChange.bind(this);
 
-        // var about_code = document.getElementById('about_code').value
-        // this.setState({
-        //     about_code: about_code
-        // })
-
-        // console.log("about_data>>>>>>>>>>55555",this.about_data.);
-
         if (code != null && code != undefined) {
+
             var about_data = await about_model.getAboutByCode(code)
-
             this.setState({
-                about_data: about_data.data
+                about_data: about_data.data,
+                about_menu_data: about_data.data.about_menu_data
             })
+            console.log("about_data : ", about_data);
+            var arr = {}
+            arr['about_code'] = code
+            arr['about_menu_data'] = this.state.about_data.about_menu_data
+            arr['about_main_branch'] = this.state.about_data.about_main_branch
 
-            var menutype_list = await menutype_model.getMenuTypeBy({ "about_code": code })
+            var menutype_list = await menutype_model.getMenuTypeBy(arr)
             this.setState({
                 menutype_list: menutype_list.data,
             })
+            console.log("menutypeeeee : ", menutype_list);
 
-            var menulist = await menu_model.getMenuBy({ "about_code": code })
+
+            var menulist = await menu_model.getMenuBy(arr)
             this.setState({
                 menulist: menulist.data
             })
+            console.log("menulist : ", menulist);
+
 
             var promotion_list = await promotion_model.getPromotionBy({ "about_code": code })
             this.setState({
                 promotion_list: promotion_list.data,
             })
 
-            var menu_list = await menu_model.getMenuByCode()
+            var menu_list = await menu_model.getMenuByCode(arr)
             this.setState({
                 menu_list: menu_list.data
             })
+            console.log("menu_list : ", menu_list);
         }
 
         var bill_order = await order_model.getOrderBy()
@@ -139,8 +141,24 @@ class HomeView extends Component {
         this.setState({
             branch_list: branch_list.data,
         })
+        console.log("this.state.menutype_list", this.state.menutype_list);
 
+        if (this.state.menutype_list.length > 0) {
+            this.getMenuByCode(this.state.menutype_list[0].menu_type_id)
+        }
     }
+
+
+
+
+    toggletabs = tab => () => {
+        if (this.state.activeItem !== tab) {
+            this.setState({
+                activeItem: tab
+            });
+        }
+    }
+
     toggle() {
         this.setState(prevState => ({
             modal: !prevState.modal
@@ -185,11 +203,15 @@ class HomeView extends Component {
     }
 
     async getMenuByCode(code) {
+
+
         // var about_code = document.getElementById('about_code').value
         var arr = {}
         arr['about_code'] = this.props.match.params.code
         arr['menu_type_id'] = code
-
+        arr['about_menu_data'] = this.state.about_data.about_menu_data
+        arr['about_main_branch'] = this.state.about_data.about_main_branch
+        console.log("arrarrarrarr", arr);
         var menu_list = await menu_model.getMenuByCode(arr)
         // console.log("menulistbycode", menu_list);
         this.setState({
@@ -203,13 +225,16 @@ class HomeView extends Component {
             var type_list = []
             for (let i = 0; i < this.state.menutype_list.length; i++) {
                 type_list.push(
-                    <Col style={{ borderWidth: 1, borderStyle: 'solid', height: 50, textAlign: 'center' }}>
-                        <div>
-                            <label style={{ margin: '15px' }} onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_id)}>
-                                {this.state.menutype_list[i].menu_type_name}
-                            </label>
-                        </div>
-                    </Col>
+                    // <Col style={{ borderWidth: 1, borderStyle: 'solid', height: 50, textAlign: 'center' }}>
+                    //     <div>
+                    //         <label style={{ margin: '15px' }} onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_id)}>
+                    //             {this.state.menutype_list[i].menu_type_name}
+                    //         </label>
+                    //     </div>
+                    // </Col>
+                    <a onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_id)} class="nav-item nav-link active" data-toggle="tab" role="tab" aria-controls="nav-home" aria-selected="true">
+                        {this.state.menutype_list[i].menu_type_name}
+                    </a>
 
                 )
             }
@@ -341,33 +366,47 @@ class HomeView extends Component {
     }
 
     renderMenuby() {
+
         if (this.state.menu_list != undefined) {
             // console.log("5555", this.state.menu_list);
             var menulist = []
             for (let i = 0; i < this.state.menu_list.length; i++) {
                 menulist.push(
-                    <Col lg="3" md="" sm="6" xs="12" style={{ paddingTop: '20px' }}>
+                    // <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <Col lg="4" md="6" sm="6" xs="12" style={{ paddingTop: '20px' }}>
                         <Card style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]) }}>
                             {/* <CardHeader>
                                 <Button onClick={this.deleteItemMenu.bind(this, this.state.menu_list[i])}>ลบรายการ</Button>
                             </CardHeader> */}
+                            <CardImg top width="50px" height="100%" className="img-manu" src={GOBALS.URL_IMG + "menu/" + this.state.menu_list[i].menu_image} alt="Card image cap" />
+
                             <CardBody>
-                                <CardTitle><label >{this.state.menu_list[i].menu_name}</label> </CardTitle>
+                                <CardTitle>
+                                    <Row style={{ paddingTop: '10px' }}>
+                                        <Col lg="6" md="6" sm="6" xs="6" >
+                                            <label >{this.state.menu_list[i].menu_name}</label>
+                                        </Col>
+                                        <Col lg="6" md="6" sm="6" xs="6" style={{ textAlign: 'center' }}>
+                                            <label >{this.state.menu_list[i].menu_price + ' ' + ' ' + ' ' + 'บาท'}</label>
+                                        </Col>
+                                    </Row>
+                                </CardTitle>
                             </CardBody>
-                            <CardFooter style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]) }}>
+                            <CardFooter style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]), textAlign: 'center' }}>
                                 <Row >
+                                    <Col lg="3" md="3" sm="3" xs="3" >
 
-                                    <Col lg="4" sm="4" xs="4" style={{ paddingTop: '5px', textAlign: 'center' }}><div>{this.state.menu_list[i].menu_price}</div></Col>
-
-                                    <Col lg="8" sm="8" xs="8" style={{ paddingTop: '5px', textAlign: 'center' }}>
-                                        <Row >
-                                            <Button onClick={this.deleteItemButton.bind(this, this.state.menu_list[i])}> - </Button>{this.rendercart(this.state.menu_list[i])}<Button onClick={this.addItem.bind(this, this.state.menu_list[i])} > + </Button>
+                                    </Col>
+                                    <Col lg="9" md="9" sm="9" xs="9" >
+                                        <Row style={{ paddingTop: '5px', }}>
+                                            <Button style={{ backgroundColor: this.hightlightbuttonMenu(this.state.menu_list[i]), borderWidth: 0, textAlign: 'center' }} onClick={this.deleteItemButton.bind(this, this.state.menu_list[i])}> - </Button>{this.rendercart(this.state.menu_list[i])}<Button style={{ backgroundColor: this.hightlightbuttonMenu(this.state.menu_list[i]), borderWidth: 0, textAlign: 'center' }} onClick={this.addItem.bind(this, this.state.menu_list[i])} > + </Button>
                                         </Row>
                                     </Col>
                                 </Row>
                             </CardFooter>
                         </Card>
                     </Col>
+                    // </div>
                 )
             }
             return menulist;
@@ -623,7 +662,7 @@ class HomeView extends Component {
 
                 <Col>
 
-                    <label style={{ color: '#239B56', marginTop: '20px' }}>
+                    <label style={{ color: '#EA2525', marginTop: '20px' }}>
                         {this.state.promotion.promotion_detail}
                     </label>
 
@@ -639,12 +678,12 @@ class HomeView extends Component {
             var order_total = []
             var sumtotal = this.sumtotal()
             order_total.push(
-                <Row>
-                    <Col md="6" sm="6" xs="8" lg="10" style={{ textAlign: 'end', }}>
-                        <label>ราคารวม</label>
+                <Row >
+                    <Col lg="4" sm="6" xs="6">
+                        <label style={{ fontWeight: 'bold', fontSize: '12pt' }}>ราคารวม</label>
                     </Col>
-                    <Col md="6" sm="6" xs="4" lg="2" style={{ textAlign: 'center', }}>
-                        <label>{sumtotal.sum_price + ' ' + ' ' + 'บาท'}</label>
+                    <Col lg="8" sm="6" xs="6">
+                        <label style={{ fontWeight: 'bold', fontSize: '12pt' }}>{sumtotal.sum_price + ' ' + ' ' + 'บาท'}</label>
                     </Col>
                 </Row>
             )
@@ -801,10 +840,19 @@ class HomeView extends Component {
     hightlightMenu(menu) {
         for (var key in this.state.cart) {
             if (this.state.cart[key].code == menu.menu_code) {
-                return 'rgba(0,255,0,0.3)'
+                return 'rgb(222,184,135)'
             }
         }
         return 'transparent'
+    }
+
+    hightlightbuttonMenu(menu) {
+        for (var key in this.state.cart) {
+            if (this.state.cart[key].code == menu.menu_code) {
+                return '#FFF8DC'
+            }
+        }
+        return ''
     }
 
     renderBranchImg() {
@@ -829,59 +877,63 @@ class HomeView extends Component {
 
 
         return (
-            <div>  {/* < Row style={{ minWidth: '100%', paddingTop: '20px' }}>
-                            <Col md="12" sm="12" xs="12" lg="12" > */}
+            <div>  
                 {this.renderBranchImg()}
-                {/* </Col>
-                        </Row> */}
+                
                 <Row style={{ minWidth: '100%', height: '100%', minHeight: '80vh' }}>
-                    <Col lg="12" >
+                    <Col lg="12" style={{ padding: 0 }}>
 
                         {this.state.cart != null && this.state.cart != undefined ?
-                            <Row style={{ minWidth: '100%', paddingBottom: '20px' }}>
-                                <Col md="6" sm="6" xs="12" lg="12">
-                                    <hr />
-                                    <Row>
-                                        <Col md="4" sm="2" xs="3" lg="4">
-                                            <Row>
-                                                <Col md="4" sm="2" xs="3" lg="2">
-                                                    <div style={{ fontSize: '13px' }}>โปรโมชั่น </div>
-                                                </Col>
-                                                <Col md="8" sm="10" xs="9" lg="10">
-                                                    <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col md="4" sm="2" xs="3" lg="2">
 
+
+
+                            <Row className="shadow p" style={{ minWidth: '100%', }}>
+                                <Col md="12" sm="12" xs="12" lg="12">
+                                    <div class="card" style={{ height: '100%', borderWidth: 0, paddingTop: '5%' }}>
+                                        <div class="container">
+                                            <Row style={{ height: '100%', borderTop: '20px' }}>
+                                                <Col md="12" sm="12" xs="12" lg="12">
+                                                    <Row style={{ borderTop: '10px' }}>
+                                                        <Col md="5" sm="4" xs="4" lg="5">
+                                                            <div className="promition-input" >โปรโมชั่น </div>
+
+                                                        </Col>
+                                                        <Col md="7" sm="8" xs="8" lg="7" >
+                                                            <Input type="text" id={"discount_code"} name={"discount_code"} onChange={this.getPromotion.bind(this)} />
+                                                        </Col>
+                                                    </Row>
+                                                    <Row >
+
+                                                        <Col md="12" sm="12" xs="12" lg="12" className="promition-text">
+                                                            {this.renderpromotion()}
+                                                        </Col>
+                                                    </Row>
                                                 </Col>
-                                                <Col md="8" sm="10" xs="9" lg="10">
-                                                    {this.renderpromotion()}
+                                                <Col md="6" sm="12" xs="12" lg="6" style={{ paddingTop: '5%' }}>
+                                                    {this.rendertotal()}
+                                                </Col>
+                                                <Col md="6" sm="12" xs="12" lg="6" style={{ paddingTop: '4%' }}>
+                                                    {this.state.cart != undefined && this.state.cart != "" ?
+                                                        <Row >
+                                                            <Col lg='12' md="12" sm="12" xs="12">
+                                                                <div>
+                                                                    {this.state.order_code != undefined ?
+                                                                        <div>
+                                                                            <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
+                                                                            <Button color="info" style={{ fontSize: '12pt' }} onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+                                                                        </div>
+                                                                        : <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
+                                                                    }
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                        : ''}
                                                 </Col>
                                             </Row>
-                                        </Col>
-                                        <Col md="4" sm="2" xs="3" lg="5">
-                                            {this.rendertotal()}
-                                        </Col>
-                                        <Col md="4" sm="2" xs="3" lg="3">
-                                            {this.state.cart != undefined && this.state.cart != "" ?
-                                                <Row style={{ textAlign: 'right' }}>
-                                                    <Col lg='12'>
-                                                        <div>
-                                                            {this.state.order_code != undefined ?
-                                                                <div>
-                                                                    <Button onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
-                                                                    <Button onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
-                                                                </div>
-                                                                : <Button onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
-                                                            }
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                                : ''}
-                                        </Col>
-                                    </Row>
-                                    <hr />
+                                        </div>
+                                    </div>
+
+
                                 </Col>
 
                             </Row>
@@ -889,18 +941,31 @@ class HomeView extends Component {
                             : ''}
 
 
-                        <Row style={{ minWidth: '100%' }}>
-                            {this.renderMenuType()}
-                        </Row>
-                        <Row >
-                            {this.renderMenuby()}
-                        </Row>
+                        <div class="col-lg-12 " style={{ paddingLeft: 0, paddingRight: 0, padding: 0 }}>
+                            <nav>
+                                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                    {this.renderMenuType()}
+                                </div>
+                            </nav>
+                            <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                                    <Row>
+                                        {this.renderMenuby()}
+                                    </Row>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
                     </Col>
 
-                </Row>
-               
-                   
-          
+                </Row >
+
+
+
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
                     <ModalHeader toggle={this.toggle} close={closeBtn}>Order : {this.state.order_code_list}</ModalHeader>
                     <ModalBody >

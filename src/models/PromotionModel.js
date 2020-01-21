@@ -68,6 +68,27 @@ export default class PromotionModel {
                 };
             });
         }
+    async getProductByFont(data) {
+        return fetch(GOBALS.URL + '/promotion/getProductByFont', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+        }
     // async insertBooking(data) {
     //     return fetch(GOBALS.URL + '/booking/insertBooking', {
     //         method: 'POST',

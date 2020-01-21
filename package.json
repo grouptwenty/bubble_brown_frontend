@@ -54,6 +54,7 @@
     "fuse.js": "^3.2.0",
     "match-sorter": "1.8.1",
     "md5": "^2.2.1",
+    "mdbreact": "^4.25.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "node-sass": "^4.11.0",

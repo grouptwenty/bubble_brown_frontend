@@ -137,7 +137,7 @@ class DefaultLayout extends Component {
                   })}
 
 
-                  <Redirect from="/" to="/user" />
+                  <Redirect from="/" to="/branch" />
                 </Switch>
               </Suspense>
               {/* <Container1>

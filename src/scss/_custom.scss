@@ -3,61 +3,60 @@ body {
   font-family: "Kanit", sans-serif !important;
   background-color: transparent  !important;
 }
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
 
-.with-arrow .nav-link.active {
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+nav > .nav.nav-tabs{
+
+  border: none;
+    color:#fff;
+    background:#856340;
+    border-radius:0;
+
+}
+nav > div a.nav-item.nav-link,
+nav > div a.nav-item.nav-link.active
+{
+  border: none;
+    padding: 18px 25px;
+    color:#fff;
+    background:#856340;
+    border-radius:0;
+}
+
+nav > div a.nav-item.nav-link.active:after
+ {
+  content: "";
   position: relative;
+  bottom: -60px;
+  left: -10%;
+  border: 15px solid transparent;
+  border-top-color: #ae977b ;
+}
+.tab-content{
+  background: #fdfdfd;
+    line-height: 25px;
+    border: 1px solid #ddd;
+    border-top:5px solid #ae977b;
+    border-bottom:5px solid #ae977b;
+    padding:30px 25px;
 }
 
-.with-arrow .nav-link.active::after {
-  content: '';
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid #2b90d9;
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: block;
-}
-
-/* lined tabs */
-
-.lined .nav-link {
+nav > div a.nav-item.nav-link:hover,
+nav > div a.nav-item.nav-link:focus
+{
   border: none;
-  border-bottom: 3px solid transparent;
-}
-
-.lined .nav-link:hover {
-  border: none;
-  border-bottom: 3px solid transparent;
-}
-
-.lined .nav-link.active {
-  background: none;
-  color: #555;
-  border-color: #2b90d9;
-}
-
-/*
-*
-* ==========================================
-* FOR DEMO PURPOSE
-* ==========================================
-*
-*/
-
-// body {
-//   background: #304352;
-//   background: -webkit-linear-gradient(to right, #304352, #d7d2cc);
-//   background: linear-gradient(to right, #304352, #d7d2cc);
-//   min-height: 100vh;
-// }
-
-.nav-pills .nav-link {
-  color: #555;
-}
-.text-uppercase {
-  letter-spacing: 0.1em;
+    background: #ae977b;
+    color:#fff;
+    border-radius:0;
+    transition:background 0.20s linear;
 }
 
 
@@ -154,7 +153,12 @@ body {
     font-weight: bold;
   }
 
-
+  .promition-input{
+    font-size: 16px;
+  }
+  .promition-text{
+    text-align: end;
+  }
 }
 @media only screen and (min-width: 360px) {
   .app-header {
@@ -169,8 +173,13 @@ body {
     padding-top: 12px;
     color: #B38D4D;
   }
+  .promition-input{
+    font-size: 16px;
+  }
 
-
+  .promition-text{
+    text-align: end;
+  }
 }
 @media only screen and (min-width: 420px) {
   .app-header {
@@ -184,7 +193,12 @@ body {
     padding-top: 12px;
     color: #B38D4D;
   }
-
+  .promition-input{
+    font-size: 16px;
+  }
+  .promition-text{
+    text-align: end;
+  }
 
 }
 @media only screen and (min-width: 480px) {
@@ -199,7 +213,12 @@ body {
     padding-top: 12px;
     color: #B38D4D;
   }
-
+  .promition-input{
+    font-size: 17px;
+  }
+  .promition-text{
+    text-align: end;
+  }
 }
 @media only screen and (min-width: 600px) {
   .app-header {
@@ -213,6 +232,16 @@ body {
     font-size: 18px;
     padding-top: 12px;
     color: #B38D4D;
+  }
+  .promition-input{
+    font-size: 17px;
+  }
+  .promition-text{
+    text-align: end;
+  }
+  .book-col{
+    padding-left: 20%;
+     padding-right: 20%;
   }
 }
 
@@ -230,6 +259,20 @@ body {
     padding-top: 12px;
     color: #B38D4D;
   }
+  .promition-input{
+    text-align: end;
+    font-size: 19px;
+  }
+  .promition-text{
+    text-align: center;
+    font-size: 17.5px;
+    margin-left: 10px;
+  }
+  .book-col{
+    padding-left: 20%;
+     padding-right: 20%;
+  }
+ 
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
@@ -244,6 +287,15 @@ body {
     font-size: 18px;
     padding-top: 12px;
     color: #B38D4D;
+  }
+  .promition-text{
+    text-align: center;
+    font-size: 17.5px;
+    margin-left: 10px;
+  }
+  .book-col{
+    padding-left: 20%;
+     padding-right: 20%;
   }
 
 }
@@ -260,6 +312,19 @@ body {
     font-size: 18px;
     padding-top: 12px;
     color: #B38D4D;
+  }
+  .promition-input{
+    text-align: end;
+    font-size: 18px;
+  }
+  .promition-text{
+    text-align: center;
+    font-size: 17.5px;
+    margin-left: 10px;
+  }
+  .book-col{
+    padding-left: 20%;
+     padding-right: 20%;
   }
   
 }
@@ -793,6 +858,12 @@ th {
 }
 .delivery {
   display: inline-block;
+}
+
+.img-manu{
+  background-size: cover;
+  background-repeat: no-repeat;
+
 }
 .xxx {
   margin-top: 20px;

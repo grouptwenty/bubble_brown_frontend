@@ -20,13 +20,17 @@ class DefaultHeader extends Component {
   }
 
   async componentDidMount() {
-    var customer_data = await localStorage.getItem('@customer_data')
-    this.setState({
-      customer_data:  JSON.parse(customer_data)
-    })
-    console.log(customer_data);
-    
+
+    // var customer_data = await localStorage.getItem('@customer_data')
+    // this.setState({
+    //   customer_data: JSON.parse(customer_data)
+    // })
+    // console.log("customer_datadgdgdfg",customer_data);
+
   }
+  // CustomerlogIn() {
+  //   this.props.history.push('/login_customer/')
+  // }
 
   render() {
 
@@ -45,33 +49,33 @@ class DefaultHeader extends Component {
         {/* </NavLink> */}
         {/* <AppSidebarToggler className="d-md-down-none" display="lg" /> */}
         {/* <img src="/icon.png" height={60} width={60}/> */}
-
+  {/* {this.state.customer_data != undefined || this.state.customer_data != null? */}
         <Row style={{ width: '100%', textAlign: 'center' }}>
 
-          <Col md="3" sm="3" xs="3">
+          <Col md="4" sm="4" xs="4">
             <NavLink to="/Branch"  >
               <strong class="title-menu">สั่งอาหาร</strong>
             </NavLink>
           </Col>
-          <Col md="3" sm="3" xs="3">
+          <Col md="4" sm="4" xs="4">
             <NavLink to="/Booking" >
               <strong class="title-menu">จองโต๊ะ</strong>
             </NavLink>
           </Col>
-          <Col md="3" sm="3" xs="3">
+          <Col md="4" sm="4" xs="4">
             <NavLink to="/Promotion" >
               <strong class="title-menu">โปรโมชั่น</strong>
             </NavLink>
           </Col>
-         
-            <Col md="3" sm="3" xs="3">
+        
+            {/* <Col md="3" sm="3" xs="3">
               <NavLink to="/Profile" >
                 <strong class="title-menu">โปรไฟล์</strong>
               </NavLink>
             </Col>
-            
+              */}
         </Row>
-
+{/* : ''}  */}
         {/* <input type="hidden" id="sub_id" value={this.props.user.admin_code} /> */}
         {/* <Nav className="ml-auto" navbar> */}
         {/* <p class="name-project">Suranaree Journal of Science and Techonilogy</p> */}

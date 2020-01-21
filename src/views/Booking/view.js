@@ -8,6 +8,7 @@ import { formatDate, parseDate, } from 'react-day-picker/moment';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import moment from 'moment'
+import BackGroung from './3061714.jpg';
 
 
 
@@ -126,12 +127,12 @@ class BookingView extends Component {
                     this.props.history.push('/booking/')
                 }
             }
-        }else{
+        } else {
             swal({
                 title: "วันที่ท่านจองไม่มีโต๊ะว่าง !!",
                 icon: "warning",
                 button: "Close",
-            }); 
+            });
         }
     }
 
@@ -192,88 +193,108 @@ class BookingView extends Component {
 
         return (
 
-            <div>
+            <div className="vc" ref="iScroll" style={{ height: "100%", verflow: "auto", }}>
 
-                <Row style={{ minWidth: '100%', backgroundColor: '#5a5a5a', height: '120px', justifyContent: 'center', alignItems: 'center' }}>
-                    <label style={{ textAlign: 'center', color: 'white', fontSize: '30px' }}>จองโต๊ะ</label>
-                </Row>
-                <br />
-                <br />
-                <br />
-                <Row>
-                    <Col>
-                        <Card>
-                            <Form onSubmit={this.handleSubmit} id="myForm">
-                                <CardBody>
-                                    <Row>
+                <section class="cd-section cd-section--bg-fixed" style={{ backgroundImage: `url(${BackGroung})`, }}>
 
-                                        <Col lg="4">
-                                            <FormGroup>
-                                                <Label className="text_head"> วันที่จอง<font color='red'><b> * </b></font></Label>
-                                                <DayPickerInput
-                                                    format="YYYY-MM-DD"
-                                                    formatDate={formatDate}
-                                                    onDayChange={this.handleDayChange.bind(this)}
-                                                    value={this.state.change_date}
-                                                // inputProps = {{readOnly}}
-                                                />
-                                            </FormGroup>
-                                        </Col>
 
-                                        <Col lg="4">
-                                            <FormGroup>
-                                                <Label className="text_head"> จำนวน <font color='red'><b> * </b></font></Label>
-                                                <Input type="number" step='2' id="booking_amount" name="booking_amount" class="form-control" min='0' max='10' >
+                    <br />
+                    <br />
+                    <br />
+                    <Row className="book-col">
+                        <Col lg="12" sm="12" xs="12" style={{ borderWidth: 0, paddingLeft: '20px', paddingRight: '20px' }}>
+                            <Card style={{ borderWidth: 0, }}>
+                                <Form onSubmit={this.handleSubmit} id="myForm">
+                                    <CardBody>
+                                        <br />
+                                        <Row style={{ minWidth: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                                            <label style={{ textAlign: 'center', fontSize: '30px' }}>จองโต๊ะ</label>
+                                        </Row>
+                                        <hr />
+                                        <br />
+                                        <br />
+                                        <Row>
+                                            <Col lg="6" sm="12" xs="12">
+                                                <FormGroup>
+                                                    <Label className="text_head"> วันที่จอง<font color='red'><b> * </b></font></Label>
+                                                    <DayPickerInput
+                                                        format="YYYY-MM-DD"
+                                                        formatDate={formatDate}
+                                                        onDayChange={this.handleDayChange.bind(this)}
+                                                        value={this.state.change_date}
+                                                    // inputProps = {{readOnly}}
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                           
+                                            <Col lg="6"  sm="12" xs="12">
+                                                <FormGroup>
+                                                    <Label className="text_head"> จำนวนคน <font color='red'><b> * </b></font></Label>
+                                                    <Input type="number" step='2' id="booking_amount" name="booking_amount" class="form-control" min='0' max='10' >
 
-                                                </Input>
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                    <Row lg="12" style={{ marginBottom: "30px", paddingTop: '10px', alignItems: 'center' }}>
-                                        <Col lg="4">
-                                            <InputGroup>
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText><i class="fa fa-user-circle-o" aria-hidden="true"></i></InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input type="text" id="booking_firstname" name="booking_firstname" class="form-control" placeholder="firstname" />
-                                            </InputGroup>
-                                        </Col>
-                                        <Col lg="4">
-                                            <InputGroup>
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText><i class="fa fa-user-circle-o" aria-hidden="true"></i></InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input type="text" id="booking_lastname" name="booking_lastname" class="form-control" placeholder="lastname" />
-                                            </InputGroup>
-                                        </Col>
-                                    </Row>
-                                    <Row lg="12" style={{ marginBottom: "30px", paddingTop: '10px' }}>
-                                        <Col lg="4">
-                                            <InputGroup>
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText><i class="fa fa-phone" aria-hidden="true"></i></InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input type="text" id="booking_tel" name="booking_tel" class="form-control" placeholder="phone" />
-                                            </InputGroup>
-                                        </Col>
-                                        <Col lg="4">
-                                            <InputGroup>
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText><i class="fa fa-envelope" aria-hidden="true"></i></InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input type="text" id="booking_email" name="booking_email" class="form-control" placeholder="e-mail" />
-                                            </InputGroup>
-                                        </Col>
-                                    </Row>
+                                                    </Input>
+                                                </FormGroup>
+                                            </Col>
 
-                                </CardBody>
-                                <CardFooter>
-                                    <Button type="submit" size="lg" color="success" name="button_save">Booking</Button>
-                                </CardFooter>
-                            </Form>
-                        </Card>
-                    </Col>
-                </Row >
+                                        </Row>
+                                        <br />
+                                        <Row lg="12" style={{ marginBottom: "30px", paddingTop: '10px', alignItems: 'center' }}>
+                                            <Col lg="6"  sm="12" xs="12">
+                                                <FormGroup>
+                                                    <InputGroup>
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText><i class="fa fa-user-circle-o" aria-hidden="true"></i></InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input type="text" id="booking_firstname" name="booking_firstname" class="form-control" placeholder="firstname" />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                            </Col>
+                                            <Col lg="6"  sm="12" xs="12">
+                                                <FormGroup>
+                                                    <InputGroup>
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText><i class="fa fa-user-circle-o" aria-hidden="true"></i></InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input type="text" id="booking_lastname" name="booking_lastname" class="form-control" placeholder="lastname" />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+
+                                        <Row lg="12" style={{ marginBottom: "30px", paddingTop: '10px' }}>
+                                            <Col lg="6"  sm="12" xs="12">
+                                                <FormGroup>
+                                                    <InputGroup>
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText><i class="fa fa-phone" aria-hidden="true"></i></InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input type="text" id="booking_tel" name="booking_tel" class="form-control" placeholder="phone" />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                            </Col>
+                                            <Col lg="6" sm="12" xs="12">
+                                                <FormGroup>
+                                                    <InputGroup>
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText><i class="fa fa-envelope" aria-hidden="true"></i></InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input type="text" id="booking_email" name="booking_email" class="form-control" placeholder="e-mail" />
+                                                    </InputGroup>
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col lg="12" sm="12" xs="12" md="12">
+                                                <Button style={{ width: '100%' }} type="submit" color="success" name="button_save">จองโต๊ะ</Button>
+                                            </Col>
+                                        </Row>
+                                    </CardBody>
+
+                                </Form>
+                            </Card>
+                        </Col>
+                    </Row >
+                </section>
             </div >
 
         )
