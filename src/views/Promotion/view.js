@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Card, CardImg, Col, Row, InputGroup, InputGroupAddon, InputGroupText, Label, FormGroup, Input, Form, CardBody, imagePreview, CardFooter, CardTitle, CardText } from 'reactstrap';
+import { Button, Carousel, Card, CardImg, Col, Row, InputGroup, InputGroupAddon, InputGroupText, Label, FormGroup, Input, Form, CardBody, imagePreview, CardFooter, CardTitle, CardText } from 'reactstrap';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
 import swal from 'sweetalert';
@@ -101,6 +101,20 @@ class PromotionView extends Component {
                     <Row style={{ paddingTop: '5%', paddingRight: '5%', paddingLeft: '5%' }}>
                         {this.renderPromotion()}
                     </Row>
+                    <Carousel>
+                        <Carousel.Item>
+                            <img
+                                className="d-block w-100"
+                                src="holder.js/800x400?text=First slide&bg=373940"
+                                alt="First slide"
+                            />
+                            <Carousel.Caption>
+                                <h3>First slide label</h3>
+                                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                       
+                    </Carousel>
                 </section>
             </div >
 

@@ -128,6 +128,13 @@ class HomeView extends Component {
                 menu_list: menu_list.data
             })
             console.log("menu_list : ", menu_list);
+
+            var about = await about_model.getAboutByCol(arr)
+            this.setState({
+                about: about.data
+            })
+            console.log("about : ", about);
+
         }
 
         var bill_order = await order_model.getOrderBy()
@@ -415,12 +422,12 @@ class HomeView extends Component {
 
     async showQR(my_location) {
         var coord = {
-            lat_start: 14.999548299999999,
-            lon_start: 102.10612169999999,
-            // lat_start: my_location.latitude,
-            // lon_start: my_location.longitude,
-            lat_end: 14.999548299999999,
-            lon_end: 102.10612169999999
+            // lat_start: 14.999548299999999,
+            // lon_start: 102.10612169999999,
+            lat_start: my_location.latitude,
+            lon_start: my_location.longitude,
+            lat_end: this.state.about.latitude,
+            lon_end: this.state.about.longitude
         }
         var gps = await gps_model.getGPS(coord)
         console.log(gps);
@@ -877,9 +884,9 @@ class HomeView extends Component {
 
 
         return (
-            <div>  
+            <div>
                 {this.renderBranchImg()}
-                
+
                 <Row style={{ minWidth: '100%', height: '100%', minHeight: '80vh' }}>
                     <Col lg="12" style={{ padding: 0 }}>
 
