@@ -27,6 +27,9 @@ class loginView extends Component {
 
 
     async componentDidMount() {
+
+        
+
         var customer_data = localStorage.getItem('@customer_data')
         this.setState({
             customer_data: customer_data
@@ -70,11 +73,15 @@ class loginView extends Component {
 
                     localStorage.setItem('@customer_data', JSON.stringify(check_Id.data))
                     var update_customer = await customer_model.updateCustomerByCode(customer_data)
+                    this.componentDidMount()
                     this.props.history.push('/profile/')
+                 
                 } else {
                     var insert_customer = await customer_model.insertCustomer(customer_data)
                     localStorage.setItem('@customer_data', JSON.stringify(customer_data))
+                    this.componentDidMount()
                     this.props.history.push('/profile/')
+                   
                 }
             })
             .fail(err => {
@@ -88,8 +95,9 @@ class loginView extends Component {
         if (this.state.customer_data != undefined) {
             login_or_profile.push(
                 this.props.history.push('/profile/')
+               
             )
-
+ this.componentDidMount()
         } else {
             login_or_profile.push(
                 <div>
@@ -99,6 +107,7 @@ class loginView extends Component {
                     </Button>
                 </div>
             )
+            
         } return login_or_profile;
     }
 

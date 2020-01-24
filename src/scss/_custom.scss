@@ -159,6 +159,10 @@ nav > div a.nav-item.nav-link:focus
   .promition-text{
     text-align: end;
   }
+  .text-menu{
+    font-size: 8px;
+    font-weight: bold;
+  }
 }
 @media only screen and (min-width: 360px) {
   .app-header {
@@ -180,6 +184,9 @@ nav > div a.nav-item.nav-link:focus
   .promition-text{
     text-align: end;
   }
+  .text-menu{
+    font-size: 9pt;
+  }
 }
 @media only screen and (min-width: 420px) {
   .app-header {
@@ -198,6 +205,9 @@ nav > div a.nav-item.nav-link:focus
   }
   .promition-text{
     text-align: end;
+  }
+  .text-menu{
+    font-size: 10pt;
   }
 
 }
@@ -218,6 +228,9 @@ nav > div a.nav-item.nav-link:focus
   }
   .promition-text{
     text-align: end;
+  }
+  .text-menu{
+    font-size: 10pt;
   }
 }
 @media only screen and (min-width: 600px) {
@@ -240,8 +253,11 @@ nav > div a.nav-item.nav-link:focus
     text-align: end;
   }
   .book-col{
-    padding-left: 20%;
-     padding-right: 20%;
+    padding-left: 10%;
+     padding-right: 10%;
+  }
+  .text-menu{
+    font-size: 11pt;
   }
 }
 
@@ -269,8 +285,11 @@ nav > div a.nav-item.nav-link:focus
     margin-left: 10px;
   }
   .book-col{
-    padding-left: 20%;
-     padding-right: 20%;
+    padding-left: 10%;
+     padding-right: 10%;
+  }
+  .text-menu{
+    font-size: 11pt;
   }
  
 }
@@ -294,8 +313,11 @@ nav > div a.nav-item.nav-link:focus
     margin-left: 10px;
   }
   .book-col{
-    padding-left: 20%;
-     padding-right: 20%;
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+  .text-menu{
+    font-size: 12pt;
   }
 
 }
@@ -323,8 +345,11 @@ nav > div a.nav-item.nav-link:focus
     margin-left: 10px;
   }
   .book-col{
-    padding-left: 20%;
-     padding-right: 20%;
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+  .text-menu{
+    font-size: 15pt;
   }
   
 }

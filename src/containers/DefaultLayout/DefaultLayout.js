@@ -29,6 +29,7 @@ var items = []
 // const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
+const DefaultHeader2 = React.lazy(() => import('./DefaultHeader2'));
 var menu = new MenuComponent();
 // const customer_model = new CustomerModel
 
@@ -63,6 +64,7 @@ class DefaultLayout extends Component {
       customer_data: JSON.parse(customer_data)
 
     })
+    // this.componentDidMount()
   }
 
   // toggle_login() {
@@ -74,11 +76,17 @@ class DefaultLayout extends Component {
 
 
   CustomerlogIn() {
+    this.componentDidMount()
     this.props.history.push('/login_customer/')
   }
 
   Order() {
-    this.props.history.push('/user/')
+    this.props.history.push('/branch/')
+  }
+
+  BookHistory() {
+    this.componentDidMount()
+    this.props.history.push('/bookhistory/')
   }
 
 
@@ -98,12 +106,15 @@ class DefaultLayout extends Component {
   render() {
 
     return (
-      <div className="app"> 
- 
+      <div className="app">
+
         <AppHeader fixed>
           <Suspense fallback={this.loading()}>
-
-            <DefaultHeader onLogout={e => this.signOut(e)} />
+            {this.state.customer_data != undefined && this.state.customer_data != null ?
+              <DefaultHeader onLogout={e => this.signOut(e)} />
+              :
+              <DefaultHeader2 onLogout={e => this.signOut(e)} />
+            }
           </Suspense>
         </AppHeader>
         <div className="app-body">
@@ -155,7 +166,7 @@ class DefaultLayout extends Component {
                   onClick={this.CustomerlogIn.bind(this)}
                 />
               </Container1> */}
-              {this.state.customer_data != undefined ?
+              {this.state.customer_data != undefined || this.state.customer_data != null ?
                 <Fab
                   text="เลือก"
                   icon={<i className="fa fa-plus" />}
@@ -170,7 +181,13 @@ class DefaultLayout extends Component {
                   >
                     <i className="fa fa-cart-plus" />
                   </Action>
-
+                  <Action
+                    text="ประวัติการจอง"
+                    style={{ backgroundColor: '#B38D4D' }}
+                    onClick={this.BookHistory.bind(this)}
+                  >
+                    <i className="fa fa-book" />
+                  </Action>
                   <Action
                     text="ประวัติส่วนตัว"
                     onClick={this.CustomerlogIn.bind(this)}
@@ -195,6 +212,9 @@ class DefaultLayout extends Component {
                   >
                     <i className="fa fa-cart-plus" />
                   </Action>
+
+     
+                
 
                   <Action
                     text="สมัครสมาชิก"

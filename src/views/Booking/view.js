@@ -13,6 +13,9 @@ import BackGroung from './3061714.jpg';
 
 
 import BookingModel from '../../models/BookingModel'
+import AboutModel from '../../models/AboutModel'
+
+var about_model = new AboutModel;
 const booking_model = new BookingModel
 var today = new Date();
 class BookingView extends Component {
@@ -20,6 +23,7 @@ class BookingView extends Component {
         super(props);
         this.state = {
             data: [],
+            about_data: [],
             menutype_list: [],
             change_date: today,
             refresh: false
@@ -28,10 +32,26 @@ class BookingView extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDayChange = this.handleDayChange.bind(this);
         this.search = this.search.bind(this);
+        this.renderBranch = this.renderBranch.bind(this);
     }
 
 
     async componentDidMount() {
+
+        var customer_data = await localStorage.getItem('@customer_data')
+        // console.log("customer_data>>>>>>>>>>.", customer_data);
+        // var customer = await customer_model.getCustomerByEmail({"customer_email":customer_data.customer_email})
+        this.setState({
+            customer_data: JSON.parse(customer_data)
+
+        })
+        var about_data = await about_model.getAboutBy()
+
+        this.setState({
+            about_data: about_data.data
+        })
+
+        console.log("about_data", about_data);
 
     }
 
@@ -41,6 +61,7 @@ class BookingView extends Component {
         });
 
     }
+
 
     search(table_code, myArray) {
         var check = false;
@@ -57,9 +78,11 @@ class BookingView extends Component {
         const form = event.target;
         const data = new FormData(form);
         var amount = document.getElementById('booking_amount').value
+  
+
         var book = {
             table_amount: amount,
-            booking_date: this.state.change_date
+            booking_date: this.state.change_date,
         }
         var checkbook = await booking_model.checkBook(book)
         var checktable = await booking_model.checkTable(book)
@@ -110,9 +133,14 @@ class BookingView extends Component {
 
             const max_code = await booking_model.getBookingMaxCode()//province data
             var booking_code = 'BK' + max_code.data.booking_max
-
+            var about_code = document.getElementById('about_code').value
+            var booking_time = document.getElementById('booking_time').value
+    
             arr['booking_code'] = booking_code
             arr['table_code'] = table_code
+            arr['about_code'] = about_code
+            arr['booking_time'] = booking_time
+            arr['customer_id'] = this.state.customer_data.customer_id
             console.log(this.check(arr))
             if (this.check(arr)) {
                 var res = await booking_model.insertBooking(arr);
@@ -188,6 +216,18 @@ class BookingView extends Component {
 
     }
 
+    renderBranch() {
+        var about = []
+        for (var key in this.state.about_data) {
+            about.push(
+                <option value={this.state.about_data[key].about_code}>{this.state.about_data[key].about_name_th}</option>
+            )
+
+        } return about
+    }
+
+
+
     render() {
 
 
@@ -196,9 +236,6 @@ class BookingView extends Component {
             <div className="vc" ref="iScroll" style={{ height: "100%", verflow: "auto", }}>
 
                 <section class="cd-section cd-section--bg-fixed" style={{ backgroundImage: `url(${BackGroung})`, }}>
-
-
-                    <br />
                     <br />
                     <br />
                     <Row className="book-col">
@@ -212,7 +249,28 @@ class BookingView extends Component {
                                         </Row>
                                         <hr />
                                         <br />
+
+                                        <Row>
+                                            <Col lg="6" md="6" sm="12" xs="12">
+                                                <Label className="text_head"> เลือกสาขาที่ท่านต้องการ <font color='red'><b> * </b></font></Label>
+                                                <Input required type="select" id="about_code" name="about_code">
+                                                    <option value="">เลือกสาขา</option>
+                                                    {this.renderBranch()}
+                                                </Input>
+                                            </Col>
+                                        </Row>
                                         <br />
+                                        <Row>
+                                            <Col lg="6" md="6" sm="12" xs="12">
+                                                <FormGroup>
+                                                    <Label className="text_head"> จำนวนคน <font color='red'><b> * </b></font></Label>
+                                                    <Input required type="number" step='2' id="booking_amount" name="booking_amount" class="form-control" min='0' max='10' >
+
+                                                    </Input>
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+
                                         <Row>
                                             <Col lg="6" sm="12" xs="12">
                                                 <FormGroup>
@@ -222,70 +280,77 @@ class BookingView extends Component {
                                                         formatDate={formatDate}
                                                         onDayChange={this.handleDayChange.bind(this)}
                                                         value={this.state.change_date}
+                                                        required
                                                     // inputProps = {{readOnly}}
                                                     />
                                                 </FormGroup>
                                             </Col>
-                                           
-                                            <Col lg="6"  sm="12" xs="12">
+                                            <Col lg="6" sm="12" xs="12">
                                                 <FormGroup>
-                                                    <Label className="text_head"> จำนวนคน <font color='red'><b> * </b></font></Label>
-                                                    <Input type="number" step='2' id="booking_amount" name="booking_amount" class="form-control" min='0' max='10' >
+                                                    <Label className="text_head"> เวลา<font color='red'><b> * </b></font></Label>
+                                                    <Input
+                                                        type="time"
+                                                        name="booking_time"
+                                                        id="booking_time"
+                                                        required
 
-                                                    </Input>
+                                                    />
                                                 </FormGroup>
                                             </Col>
-
                                         </Row>
-                                        <br />
-                                        <Row lg="12" style={{ marginBottom: "30px", paddingTop: '10px', alignItems: 'center' }}>
-                                            <Col lg="6"  sm="12" xs="12">
+
+                                        <Row lg="12" style={{ paddingTop: '10px', alignItems: 'center' }}>
+                                            <Col lg="6" sm="12" xs="12">
                                                 <FormGroup>
+                                                    <Label className="text_head"> ชื่อ<font color='red'><b> * </b></font></Label>
                                                     <InputGroup>
                                                         <InputGroupAddon addonType="prepend">
                                                             <InputGroupText><i class="fa fa-user-circle-o" aria-hidden="true"></i></InputGroupText>
                                                         </InputGroupAddon>
-                                                        <Input type="text" id="booking_firstname" name="booking_firstname" class="form-control" placeholder="firstname" />
+                                                        <Input required type="text" id="booking_firstname" name="booking_firstname" class="form-control" placeholder="firstname" />
                                                     </InputGroup>
                                                 </FormGroup>
                                             </Col>
-                                            <Col lg="6"  sm="12" xs="12">
+                                            <Col lg="6" sm="12" xs="12">
                                                 <FormGroup>
+                                                    <Label className="text_head"> นามสกุล<font color='red'><b> * </b></font></Label>
                                                     <InputGroup>
                                                         <InputGroupAddon addonType="prepend">
                                                             <InputGroupText><i class="fa fa-user-circle-o" aria-hidden="true"></i></InputGroupText>
                                                         </InputGroupAddon>
-                                                        <Input type="text" id="booking_lastname" name="booking_lastname" class="form-control" placeholder="lastname" />
+                                                        <Input required type="text" id="booking_lastname" name="booking_lastname" class="form-control" placeholder="lastname" />
                                                     </InputGroup>
                                                 </FormGroup>
                                             </Col>
                                         </Row>
 
                                         <Row lg="12" style={{ marginBottom: "30px", paddingTop: '10px' }}>
-                                            <Col lg="6"  sm="12" xs="12">
+                                            <Col lg="6" sm="12" xs="12">
                                                 <FormGroup>
+                                                    <Label className="text_head"> เบอร์โทรศัพท์<font color='red'><b> * </b></font></Label>
                                                     <InputGroup>
                                                         <InputGroupAddon addonType="prepend">
                                                             <InputGroupText><i class="fa fa-phone" aria-hidden="true"></i></InputGroupText>
                                                         </InputGroupAddon>
-                                                        <Input type="text" id="booking_tel" name="booking_tel" class="form-control" placeholder="phone" />
+                                                        <Input required type="text" id="booking_tel" name="booking_tel" class="form-control" placeholder="phone" />
                                                     </InputGroup>
                                                 </FormGroup>
                                             </Col>
                                             <Col lg="6" sm="12" xs="12">
                                                 <FormGroup>
+                                                    <Label className="text_head"> อีเมล<font color='red'><b> * </b></font></Label>
                                                     <InputGroup>
                                                         <InputGroupAddon addonType="prepend">
                                                             <InputGroupText><i class="fa fa-envelope" aria-hidden="true"></i></InputGroupText>
                                                         </InputGroupAddon>
-                                                        <Input type="text" id="booking_email" name="booking_email" class="form-control" placeholder="e-mail" />
+                                                        <Input required type="text" id="booking_email" name="booking_email" class="form-control" placeholder="e-mail" />
                                                     </InputGroup>
                                                 </FormGroup>
                                             </Col>
                                         </Row>
                                         <Row>
                                             <Col lg="12" sm="12" xs="12" md="12">
-                                                <Button style={{ width: '100%' }} type="submit" color="success" name="button_save">จองโต๊ะ</Button>
+                                                <Button style={{ width: '100%' }} type="submit" color="success" size="lg" block name="button_save">จองโต๊ะ</Button>
                                             </Col>
                                         </Row>
                                     </CardBody>

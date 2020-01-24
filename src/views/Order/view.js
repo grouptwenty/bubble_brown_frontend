@@ -240,7 +240,7 @@ class HomeView extends Component {
                     //     </div>
                     // </Col>
                     <a onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_id)} class="nav-item nav-link active" data-toggle="tab" role="tab" aria-controls="nav-home" aria-selected="true">
-                        {this.state.menutype_list[i].menu_type_name}
+                       <label className="text-menu">{this.state.menutype_list[i].menu_type_name}</label>
                     </a>
 
                 )
@@ -380,12 +380,12 @@ class HomeView extends Component {
             for (let i = 0; i < this.state.menu_list.length; i++) {
                 menulist.push(
                     // <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    <Col lg="4" md="6" sm="6" xs="12" style={{ paddingTop: '20px' }}>
+                    <Col lg="3" md="4" sm="6" xs="12" style={{ paddingTop: '20px' }}>
                         <Card style={{ backgroundColor: this.hightlightMenu(this.state.menu_list[i]) }}>
                             {/* <CardHeader>
                                 <Button onClick={this.deleteItemMenu.bind(this, this.state.menu_list[i])}>ลบรายการ</Button>
                             </CardHeader> */}
-                            <CardImg top width="50px" height="100%" className="img-manu" src={GOBALS.URL_IMG + "menu/" + this.state.menu_list[i].menu_image} alt="Card image cap" />
+                            <CardImg top width="40px" height="280px" className="img-manu" src={GOBALS.URL_IMG + "menu/" + this.state.menu_list[i].menu_image} alt="Card image cap" />
 
                             <CardBody>
                                 <CardTitle>
@@ -926,8 +926,16 @@ class HomeView extends Component {
                                                                 <div>
                                                                     {this.state.order_code != undefined ?
                                                                         <div>
-                                                                            <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
-                                                                            <Button color="info" style={{ fontSize: '12pt' }} onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+                                                                            <Row>
+                                                                                <Col lg="8">
+                                                                                <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
+
+                                                                                </Col>
+                                                                                <Col lg="4">
+                                                                                <Button color="info" style={{ fontSize: '12pt',color:'#fff' }} onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+
+                                                                                </Col>
+                                                                            </Row>
                                                                         </div>
                                                                         : <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.showScanQR.bind(this)}><label>สั่งอาหาร</label></Button>
                                                                     }

@@ -49,8 +49,9 @@ class ProfileView extends Component {
         localStorage.clear();
         // this.props.setUser([])
         saveStateLogout()
-        this.componentDidMount()
+      
         this.props.history.push('/login_customer')
+        //   this.componentDidMount()
       }
 
     render() {

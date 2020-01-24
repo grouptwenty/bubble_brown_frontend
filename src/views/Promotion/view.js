@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Carousel, Card, CardImg, Col, Row, InputGroup, InputGroupAddon, InputGroupText, Label, FormGroup, Input, Form, CardBody, imagePreview, CardFooter, CardTitle, CardText } from 'reactstrap';
+import { Button, Card, CardImg, Col, Row, InputGroup, InputGroupAddon, InputGroupText, Label, FormGroup, Input, Form, CardBody, imagePreview, CardFooter, CardTitle, CardText } from 'reactstrap';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
 import swal from 'sweetalert';
@@ -8,8 +8,8 @@ import { formatDate, parseDate, } from 'react-day-picker/moment';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import BackGroung from './3061714.jpg';
-import ImgDefault from '../../assets/img/img_default.png'
-
+import ImgDefault from '../../assets/img/default-user.png'
+import Carousel from 'react-bootstrap/Carousel'
 import PromotionModel from '../../models/PromotionModel'
 import MenuTypeModel from '../../models/MenuTypeModel'
 
@@ -61,7 +61,7 @@ class PromotionView extends Component {
             promotion.push(
                 <Col lg="4" md="4" sm="6" xs="12">
                     <Card body style={{ color: '#000', borderWidth: 0 }}>
-                        <CardImg top width="150px" height="150px" src={this.state.promotion_list[i].promotion_image != "" && this.state.promotion_list[i].promotion_image != null ? GOBALS.URL_IMG + "promotion/" + this.state.promotion_list[i].promotion_image : ImgDefault} alt="Card image cap" />
+                        <CardImg top height="200px" src={this.state.promotion_list[i].promotion_image != "" && this.state.promotion_list[i].promotion_image != null ? GOBALS.URL_IMG + "promotion/" + this.state.promotion_list[i].promotion_image : ImgDefault} alt="Card image cap" />
 
                         <CardTitle style={{ fontWeight: 'bold' }}>{this.state.promotion_list[i].promotion_header}</CardTitle>
                         {/* <CardText>รายละเอียด: {this.state.promotion_list[i].promotion_detail}</CardText> */}
@@ -101,20 +101,8 @@ class PromotionView extends Component {
                     <Row style={{ paddingTop: '5%', paddingRight: '5%', paddingLeft: '5%' }}>
                         {this.renderPromotion()}
                     </Row>
-                    <Carousel>
-                        <Carousel.Item>
-                            <img
-                                className="d-block w-100"
-                                src="holder.js/800x400?text=First slide&bg=373940"
-                                alt="First slide"
-                            />
-                            <Carousel.Caption>
-                                <h3>First slide label</h3>
-                                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                       
-                    </Carousel>
+                   
+
                 </section>
             </div >
 

@@ -12,7 +12,7 @@ const propTypes = {
 
 const defaultProps = {};
 
-class DefaultHeader extends Component {
+class DefaultHeader2 extends Component {
   constructor(props) {
     super(props)
 
@@ -21,19 +21,10 @@ class DefaultHeader extends Component {
 
   async componentDidMount() {
 
-    var customer_data = await localStorage.getItem('@customer_data')
-    this.setState({
-      customer_data: JSON.parse(customer_data)
-    })
-    console.log("customer_datadgdgdfg",customer_data);
 
   }
-  // CustomerlogIn() {
-  //   this.props.history.push('/login_customer/')
-  // }
-  CustomerlogIn() {
-    this.props.history.push('/login_customer/')
-  }
+ 
+ 
   render() {
 
     // eslint-disable-next-line
@@ -59,14 +50,14 @@ class DefaultHeader extends Component {
               <strong class="title-menu">สั่งอาหาร</strong>
             </NavLink>
           </Col>
-       
-          <Col md="4" sm="4" xs="4">
-            <NavLink to="/Booking" >
-              <strong class="title-menu">จองโต๊ะ</strong>
-            </NavLink>
-          </Col>
           
    
+          <Col md="4" sm="4" xs="4">
+          <NavLink to="/login_customer"  >
+              <strong  class="title-menu">จองโต๊ะ</strong>
+              </NavLink>
+          </Col>
+        
           <Col md="4" sm="4" xs="4">
             <NavLink to="/Promotion" >
               <strong class="title-menu">โปรโมชั่น</strong>
@@ -122,12 +113,12 @@ class DefaultHeader extends Component {
   }
 }
 
-DefaultHeader.propTypes = propTypes;
-DefaultHeader.defaultProps = defaultProps;
+DefaultHeader2.propTypes = propTypes;
+DefaultHeader2.defaultProps = defaultProps;
 const mapStatetoProps = (state) => {
   return {
     user: state.user,
   }
 }
-export default connect(mapStatetoProps)(DefaultHeader);
+export default connect(mapStatetoProps)(DefaultHeader2);
 
