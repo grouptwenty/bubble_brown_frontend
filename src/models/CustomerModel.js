@@ -113,6 +113,28 @@ export default class CustomerModel {
             });
     }
 
+    async getCustomerByCusId(data) {
+        return fetch(GOBALS.URL + '/customer/getCustomerByCusId', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+
     async deleteCustomerByCode(data) {
         return fetch(GOBALS.URL + '/customer/deleteCustomerByCode', {
             method: 'POST',
@@ -159,6 +181,91 @@ export default class CustomerModel {
 
     async insertCustomer(data) {
         return fetch(GOBALS.URL + '/customer/insertCustomer', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+    async insertCustomer(data) {
+        return fetch(GOBALS.URL + '/customer/insertCustomer', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+
+    async ChangName(data) {
+        return fetch(GOBALS.URL + '/customer/ChangName', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+    async ChangeEmail(data) {
+        return fetch(GOBALS.URL + '/customer/ChangeEmail', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+    async ChangeTel(data) {
+        return fetch(GOBALS.URL + '/customer/ChangeTel', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
