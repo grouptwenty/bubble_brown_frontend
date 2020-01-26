@@ -112,6 +112,28 @@ export default class OrderModel {
             });
     }
 
+
+    async getOrderByCusOld(data) {
+        return fetch(GOBALS.URL + '/order/getOrderByCusOld', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
     async updateRevisedByCode(data) {
         return fetch(GOBALS.URL + '/order/updateRevisedByCode', {
             method: 'POST',

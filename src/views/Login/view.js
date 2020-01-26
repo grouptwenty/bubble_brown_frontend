@@ -73,14 +73,16 @@ class loginView extends Component {
 
                     localStorage.setItem('@customer_data', JSON.stringify(check_Id.data))
                     var update_customer = await customer_model.updateCustomerByCode(customer_data)
-                    this.componentDidMount()
+                   
                     this.props.history.push('/profile/')
+                    window.location.reload();
                  
                 } else {
                     var insert_customer = await customer_model.insertCustomer(customer_data)
                     localStorage.setItem('@customer_data', JSON.stringify(customer_data))
-                    this.componentDidMount()
+               
                     this.props.history.push('/profile/')
+                    window.location.reload();
                    
                 }
             })

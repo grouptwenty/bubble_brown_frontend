@@ -91,67 +91,100 @@ class HomeView extends Component {
         });
         this.handleTextChange = this.handleTextChange.bind(this);
 
-        if (code != null && code != undefined) {
-
-            var about_data = await about_model.getAboutByCode(code)
-            this.setState({
-                about_data: about_data.data,
-                about_menu_data: about_data.data.about_menu_data
-            })
-            console.log("about_data : ", about_data);
-            var arr = {}
-            arr['about_code'] = code
-            arr['about_menu_data'] = this.state.about_data.about_menu_data
-            arr['about_main_branch'] = this.state.about_data.about_main_branch
-
-            var menutype_list = await menutype_model.getMenuTypeBy(arr)
-            this.setState({
-                menutype_list: menutype_list.data,
-            })
-            console.log("menutypeeeee : ", menutype_list);
-
-
-            var menulist = await menu_model.getMenuBy(arr)
-            this.setState({
-                menulist: menulist.data
-            })
-            console.log("menulist : ", menulist);
-
-
-            var promotion_list = await promotion_model.getPromotionBy({ "about_code": code })
-            this.setState({
-                promotion_list: promotion_list.data,
-            })
-
-            var menu_list = await menu_model.getMenuByCode(arr)
-            this.setState({
-                menu_list: menu_list.data
-            })
-            console.log("menu_list : ", menu_list);
-
-            var about = await about_model.getAboutByCol(arr)
-            this.setState({
-                about: about.data
-            })
-            console.log("about : ", about);
-
-        }
-
-        var bill_order = await order_model.getOrderBy()
+        var customer_data = await localStorage.getItem('@customer_data')
+        console.log("customer_dataorderrrrrrrrrrr", customer_data);
+        // var customer = await customer_model.getCustomerByEmail({"customer_email":customer_data.customer_email})
         this.setState({
-            bill_order: bill_order.data,
+            customer_data: JSON.parse(customer_data)
+
         })
 
-        var branch_list = await about_model.getAboutBy()
-        // console.log("branch_list", branch_list);
+        if (this.state.customer_data != undefined) {
+            if (code != null && code != undefined) {
 
-        this.setState({
-            branch_list: branch_list.data,
-        })
-        console.log("this.state.menutype_list", this.state.menutype_list);
 
-        if (this.state.menutype_list.length > 0) {
-            this.getMenuByCode(this.state.menutype_list[0].menu_type_id)
+
+                var check_order_old = await order_model.getOrderByCusOld({ 'about_code': code, 'customer_code': this.state.customer_data.customer_code })
+                if (check_order_old.data != undefined) {
+                    var orderlist_old = await order_list_model.getOrderListByOrderCode({ 'order_code': check_order_old.data.order_code })
+                    var promotion_old = await promotion_model.getPromotionByPromotionCode(check_order_old.data.promotion_code)
+
+                    console.log("check_order_old", check_order_old);
+                    console.log("orderlist_old", orderlist_old);
+
+                    for (var i in orderlist_old.data) {
+
+                        this.addItemTocart(orderlist_old.data[i].order_list_name, orderlist_old.data[i].order_list_price_qty, orderlist_old.data[i].menu_code, orderlist_old.data[i].order_list_qty, orderlist_old.data[i].menu_type_id)
+                    }
+                    await this.setState({
+                        order_list: orderlist_old.data,
+                        order_code: check_order_old.data.order_code,
+                        promotion: promotion_old.data,
+                        promotion_use_list: promotion_old.data,
+                    })
+                    console.log('this.state.cart', this.state.cart);
+
+                }
+                var about_data = await about_model.getAboutByCode(code)
+                this.setState({
+                    about_data: about_data.data,
+                    about_menu_data: about_data.data.about_menu_data,
+                })
+                console.log("about_dataabout_dataabout_dataabout_data : ", this.state.about_data);
+                var arr = {}
+                arr['about_code'] = code
+                arr['about_menu_data'] = this.state.about_data.about_menu_data
+                arr['about_main_branch'] = this.state.about_data.about_main_branch
+
+                var menutype_list = await menutype_model.getMenuTypeBy(arr)
+                this.setState({
+                    menutype_list: menutype_list.data,
+                })
+                console.log("menutypeeeee : ", menutype_list);
+
+
+                var menulist = await menu_model.getMenuBy(arr)
+                this.setState({
+                    menulist: menulist.data
+                })
+                console.log("menulist : ", menulist);
+
+
+                var promotion_list = await promotion_model.getPromotionBy({ "about_code": code })
+                this.setState({
+                    promotion_list: promotion_list.data,
+                })
+
+                var menu_list = await menu_model.getMenuByCode(arr)
+                this.setState({
+                    menu_list: menu_list.data
+                })
+                console.log("menu_list : ", menu_list);
+
+                var about = await about_model.getAboutByCol(arr)
+                this.setState({
+                    about: about.data
+                })
+                console.log("about : ", about);
+
+            }
+
+            var bill_order = await order_model.getOrderBy()
+            this.setState({
+                bill_order: bill_order.data,
+            })
+
+            var branch_list = await about_model.getAboutBy()
+            // console.log("branch_list", branch_list);
+
+            this.setState({
+                branch_list: branch_list.data,
+            })
+            console.log("this.state.menutype_list", this.state.menutype_list);
+
+            if (this.state.menutype_list.length > 0) {
+                this.getMenuByCode(this.state.menutype_list[0].menu_type_id)
+            }
         }
     }
 
@@ -240,7 +273,7 @@ class HomeView extends Component {
                     //     </div>
                     // </Col>
                     <a onClick={this.getMenuByCode.bind(this, this.state.menutype_list[i].menu_type_id)} class="nav-item nav-link active" data-toggle="tab" role="tab" aria-controls="nav-home" aria-selected="true">
-                       <label className="text-menu">{this.state.menutype_list[i].menu_type_name}</label>
+                        <label className="text-menu">{this.state.menutype_list[i].menu_type_name}</label>
                     </a>
 
                 )
@@ -251,24 +284,28 @@ class HomeView extends Component {
 
     renderOrderList() {
         var Bill_order_list = []
-        for (let i = 0; i < this.state.order_list.length; i++) {
-            Bill_order_list.push(
-                <Row>
-                    <Col lg="4">
-                        <Label className="text_head" > {this.state.order_list[i].order_list_name} </Label>
-                    </Col>
-                    <Col lg="4" style={{ textAlign: 'center' }}>
-                        <Label className="text_head" > {this.state.order_list[i].order_list_qty} </Label>
+        if (this.state.order_list != undefined) {
+            for (var i in this.state.order_list.length) {
+                Bill_order_list.push(
+                    <Row>
+                        <Col lg="4">
+                            <Label className="text_head" > {this.state.order_list[i].order_list_name} </Label>
+                        </Col>
+                        <Col lg="4" style={{ textAlign: 'center' }}>
+                            <Label className="text_head" > {this.state.order_list[i].order_list_qty} </Label>
 
-                    </Col>
-                    <Col lg="4" style={{ textAlign: 'center' }}>
-                        <Label className="text_head" > {this.state.order_list[i].order_list_price_sum_qty} </Label>
+                        </Col>
+                        <Col lg="4" style={{ textAlign: 'center' }}>
+                            <Label className="text_head" > {this.state.order_list[i].order_list_price_sum_qty} </Label>
 
-                    </Col>
+                        </Col>
 
-                </Row>
-            )
+                    </Row>
+                )
+            }
         }
+        console.log('Bill_order_list', Bill_order_list);
+
         return Bill_order_list;
     }
 
@@ -344,6 +381,7 @@ class HomeView extends Component {
     rendercart(menu) {
         var cart_list = []
         if (this.state.cart != undefined) {
+
 
             for (let i = 0; i < this.state.cart.length; i++) {
                 if (menu.menu_code == this.state.cart[i].code) {
@@ -431,7 +469,9 @@ class HomeView extends Component {
         }
         var gps = await gps_model.getGPS(coord)
         console.log(gps);
-        if (gps.distance <= 200) {
+        if (gps.distance <= this.state.about_data.distance) {
+            console.log("this.state.about_data.distance",this.state.about_data.distance);
+            
             swal({
                 title: "คุณต้องการสั่งอาหารใช่หรือไม่ ?",
                 // text: "Once deleted, you will not be able to recover this imaginary file!",
@@ -491,7 +531,7 @@ class HomeView extends Component {
             order = {
                 'table_code': this.state.result,
                 // 'order_service': order_service,
-                'customer_code': 'CM001',
+                'customer_code': this.state.customer_data.customer_code,
                 'order_date': toDay,
                 'order_code': order_code,
                 'promotion_code': this.state.promotion.promotion_code,
@@ -505,7 +545,7 @@ class HomeView extends Component {
             order = {
                 'table_code': this.state.result,
                 // 'order_service': order_service,
-                'customer_code': 'CM001',
+                'customer_code': this.state.customer_data.customer_code,
                 'order_date': toDay,
                 'order_code': order_code,
                 'promotion_code': '',
@@ -521,7 +561,7 @@ class HomeView extends Component {
         const res = await order_model.insertOrder(order)
         if (this.state.promotion != undefined) {
             var promotion_use = {
-                'customer_code': "CUS0001",
+                'customer_code': this.state.customer_data.customer_code,
                 'promotion_code': this.state.promotion.promotion_code,
                 'discount_code': this.state.promotion.discount_code,
                 'order_code': order_code,
@@ -578,7 +618,7 @@ class HomeView extends Component {
         if (this.state.promotion != undefined) {
             order = {
                 // 'order_service': order_service,
-                'customer_code': 'CM001',
+                'customer_code': this.state.customer_data.customer_code,
                 'order_date': toDay,
                 'order_code': this.state.order_code,
                 'promotion_code': this.state.promotion.promotion_code,
@@ -593,7 +633,7 @@ class HomeView extends Component {
         } else {
             order = {
                 // 'order_service': order_service,
-                'customer_code': 'CM001',
+                'customer_code': this.state.customer_data.customer_code,
                 'order_date': toDay,
                 'order_code': this.state.order_code,
                 'promotion_code': '',
@@ -612,7 +652,7 @@ class HomeView extends Component {
 
         if (this.state.promotion != undefined) {
             var promotion_use = {
-                'customer_code': "CUS0001",
+                'customer_code': this.state.customer_data.customer_code,
                 'promotion_code': this.state.promotion.promotion_code,
                 'discount_code': this.state.promotion.discount_code,
                 'order_code': order_code,
@@ -892,8 +932,6 @@ class HomeView extends Component {
 
                         {this.state.cart != null && this.state.cart != undefined ?
 
-
-
                             <Row className="shadow p" style={{ minWidth: '100%', }}>
                                 <Col md="12" sm="12" xs="12" lg="12">
                                     <div class="card" style={{ height: '100%', borderWidth: 0, paddingTop: '5%' }}>
@@ -916,11 +954,14 @@ class HomeView extends Component {
                                                         </Col>
                                                     </Row>
                                                 </Col>
+
+                                                {this.renderOrderList()}
+
                                                 <Col md="6" sm="12" xs="12" lg="6" style={{ paddingTop: '5%' }}>
                                                     {this.rendertotal()}
                                                 </Col>
                                                 <Col md="6" sm="12" xs="12" lg="6" style={{ paddingTop: '4%' }}>
-                                                    {this.state.cart != undefined && this.state.cart != "" ?
+                                                    {this.state.cart != undefined ?
                                                         <Row >
                                                             <Col lg='12' md="12" sm="12" xs="12">
                                                                 <div>
@@ -928,11 +969,11 @@ class HomeView extends Component {
                                                                         <div>
                                                                             <Row>
                                                                                 <Col lg="8">
-                                                                                <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
+                                                                                    <Button color="success" style={{ width: '100%', fontSize: '12pt' }} onClick={this.updateOrder.bind(this, this.state.order_code)}><label>สั่งอาหาร</label></Button>
 
                                                                                 </Col>
                                                                                 <Col lg="4">
-                                                                                <Button color="info" style={{ fontSize: '12pt',color:'#fff' }} onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
+                                                                                    <Button color="info" style={{ fontSize: '12pt', color: '#fff' }} onClick={this.onBillDetail.bind(this, this.state.order_code)}><label>ดูบิล</label></Button>
 
                                                                                 </Col>
                                                                             </Row>

@@ -76,7 +76,7 @@ class PromotionView extends Component {
                             </Row>
                         </CardText>
                         {/* <CardText>หมดเขต: {this.state.promotion_list[i].enddate}</CardText> */}
-                        <CardText><labal style={{ fontWeight: 'bold' }}> รหัสโปรโมชั่น: </labal>{this.state.promotion_list[i].promotion_header}</CardText>
+                        <CardText><labal style={{ fontWeight: 'bold' }}> รหัสโปรโมชั่น: </labal>{this.state.promotion_list[i].discount_code}</CardText>
                         <CardText><labal style={{ fontWeight: 'bold' }}> เงื่อนไข:</labal> {this.state.promotion_list[i].promotion_detail}</CardText>
 
                     </Card>

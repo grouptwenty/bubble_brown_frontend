@@ -45,11 +45,11 @@ class HistoryBookView extends Component {
         })
         console.log("about_data", about_data);
         if (this.state.customer_data != undefined && this.state.customer_data != null) {
-            var book_customer = await booking_model.getBookingByCustomer({ 'customer_id': this.state.customer_data.customer_id, 'about_code': 'EP0001' })
+            var book_customer = await booking_model.getBookingByCustomer({ 'customer_code': this.state.customer_data.customer_code, 'about_code': 'EP0001' })
             this.setState({
                 book_customer: book_customer.data,
             })
-            // console.log(book_customer);
+            console.log(book_customer);
         }
 
     }
@@ -110,9 +110,9 @@ class HistoryBookView extends Component {
     async renderBookByAbout(code) {
         console.log(code);
     
-            var customer_id = this.state.customer_data.customer_id
-            console.log(customer_id);
-            var book_customer = await booking_model.getBookingByCustomer({ 'about_code': code, 'customer_id': customer_id })
+            var customer_code = this.state.customer_data.customer_code
+            console.log(customer_code);
+            var book_customer = await booking_model.getBookingByCustomer({ 'about_code': code, 'customer_code': customer_code })
             this.setState({
                 book_customer: book_customer.data,
             })
@@ -127,12 +127,12 @@ class HistoryBookView extends Component {
 
         return (
 
-            <div className="vc" ref="iScroll" style={{ height: "100%", verflow: "auto", }}>
+            <div >
 
                 <section class="cd-section cd-section--bg-fixed" style={{ backgroundImage: `url(${BackGroung})`, }}>
                     <br />
                     <br />
-                    <Row className="book-col">
+                    <Row className="book-col" >
                         <Col lg="12" sm="12" xs="12" style={{ borderWidth: 0, paddingLeft: '20px', paddingRight: '20px' }}>
                             <Card style={{ borderWidth: 0, }}>
                                 <Form onSubmit={this.handleSubmit} id="myForm">
@@ -147,8 +147,8 @@ class HistoryBookView extends Component {
                                             <Col lg="3" md="3" sm="2" xs="2" style={{ borderRightColor: '#F2F3F4', borderRightStyle: 'double', borderRightWidth: '1px' }}>
                                                 {this.renderBranch()}
                                             </Col>
-                                            <Col lg="9" md="9" sm="10" xs="10">
-                                                <Row>
+                                            <Col lg="9" md="9" sm="10" xs="10" >
+                                                <Row >
                                                     {this.renderBookBy()}
                                                 </Row>
                                             </Col>

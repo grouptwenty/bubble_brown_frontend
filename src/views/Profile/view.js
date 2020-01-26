@@ -40,16 +40,17 @@ class ProfileView extends Component {
 
         })
 
-        var show_customer = await customer_model.getCustomerByCusId({ 'customer_id': this.state.customer_data.customer_id })
+        if (this.state.customer_data != undefined) {
+            var show_customer = await customer_model.getCustomerByCusId({ 'customer_id': this.state.customer_data.customer_id })
 
 
-        this.setState({
-            show_customer: show_customer.data
+            this.setState({
+                show_customer: show_customer.data
 
-        })
-        console.log("show_customer", show_customer);
+            })
+            console.log("show_customer", show_customer);
 
-
+        }
     }
 
     signOut(e) {
@@ -59,11 +60,13 @@ class ProfileView extends Component {
         saveStateLogout()
 
         this.props.history.push('/login_customer')
+        window.location.reload();
         //   this.componentDidMount()
     }
 
     async  _changeName() {
         var customer_name = document.getElementById('customer_name').value
+        console.log("customer_name", customer_name);
 
         var data = {
             customer_name: customer_name,
@@ -74,6 +77,8 @@ class ProfileView extends Component {
 
         var update_name = await customer_model.ChangName(data)
 
+        console.log("update_name", update_name);
+        window.location.reload();
 
     }
     async  _changeEmail() {
@@ -90,7 +95,7 @@ class ProfileView extends Component {
 
         var update_email = await customer_model.ChangeEmail(data)
 
-
+        window.location.reload();
     }
 
     async  _changeTel() {
@@ -105,7 +110,7 @@ class ProfileView extends Component {
 
 
         var update_tel = await customer_model.ChangeTel(data)
-
+        window.location.reload();
 
     }
 
@@ -193,7 +198,7 @@ class ProfileView extends Component {
                             {this.renderProfile()}
                             <Col lg="12">
                                 <Row >
-                                    <Col lg="12" style={{ textAlign: 'center',paddingTop:'20px' }}>
+                                    <Col lg="12" style={{ textAlign: 'center', paddingTop: '20px' }}>
                                         <Button size="lg" block color="success" onClick={e => this.signOut(e)}>ออกจากระบบ</Button>
                                     </Col>
                                 </Row>

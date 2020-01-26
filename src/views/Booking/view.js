@@ -39,7 +39,7 @@ class BookingView extends Component {
     async componentDidMount() {
 
         var customer_data = await localStorage.getItem('@customer_data')
-        // console.log("customer_data>>>>>>>>>>.", customer_data);
+        console.log("customer_data>>>>>>>>>>24664.", customer_data);
         // var customer = await customer_model.getCustomerByEmail({"customer_email":customer_data.customer_email})
         this.setState({
             customer_data: JSON.parse(customer_data)
@@ -78,11 +78,14 @@ class BookingView extends Component {
         const form = event.target;
         const data = new FormData(form);
         var amount = document.getElementById('booking_amount').value
-  
+        var about_code = document.getElementById('about_code').value
+        console.log("about_code", about_code);
+
 
         var book = {
             table_amount: amount,
             booking_date: this.state.change_date,
+            about_code: about_code,
         }
         var checkbook = await booking_model.checkBook(book)
         var checktable = await booking_model.checkTable(book)
@@ -133,14 +136,16 @@ class BookingView extends Component {
 
             const max_code = await booking_model.getBookingMaxCode()//province data
             var booking_code = 'BK' + max_code.data.booking_max
-            var about_code = document.getElementById('about_code').value
+            // var about_code = document.getElementById('about_code').value
             var booking_time = document.getElementById('booking_time').value
-    
+
             arr['booking_code'] = booking_code
             arr['table_code'] = table_code
             arr['about_code'] = about_code
             arr['booking_time'] = booking_time
-            arr['customer_id'] = this.state.customer_data.customer_id
+            arr['customer_code'] = this.state.customer_data.customer_code
+            console.log(this.state.customer_data.customer_code);
+            
             console.log(this.check(arr))
             if (this.check(arr)) {
                 var res = await booking_model.insertBooking(arr);
@@ -152,7 +157,7 @@ class BookingView extends Component {
                         icon: "success",
                         button: "Close",
                     });
-                    this.props.history.push('/booking/')
+                    this.componentDidMount()
                 }
             }
         } else {

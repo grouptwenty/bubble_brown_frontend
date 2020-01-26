@@ -135,6 +135,27 @@ export default class OrderListModel {
                 };
             });
     }
+    async getOrderListByOrderCode(data) {
+        return fetch(GOBALS.URL + '/order_list/getOrderListByOrderCode', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result:false
+                };
+            });
+    }
     
     async getOrderListOldBy(data) {
         return fetch(GOBALS.URL + '/order_list/getOrderListOldBy', {

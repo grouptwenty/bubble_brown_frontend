@@ -285,6 +285,7 @@ export default class CustomerModel {
                 };
             });
     }
+ 
     async getLineInformation(data) {
         return fetch('https://api.line.me/v2/profile', {
             method: 'GET',

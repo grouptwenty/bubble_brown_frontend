@@ -3,6 +3,30 @@ export default class PromotionModel {
 
     constructor() {
     }
+
+
+    async getPromotionByPromotionCode(data) {
+        return fetch(GOBALS.URL + '/promotion/getPromotionByPromotionCode', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ promotion_code: data })
+        }).then((response) => response.json())
+            .then((responseJson) => {
+
+                return responseJson;
+            }).catch((error) => {
+                return {
+                    data: [],
+                    error: error,
+                    query_result: false,
+                    server_result: false
+                };
+            });
+    }
+    
     async getPromotionBy(data) {
         return fetch(GOBALS.URL + '/promotion/getPromotionBy', {
             method: 'POST',
