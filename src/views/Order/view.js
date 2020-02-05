@@ -70,7 +70,7 @@ class HomeView extends Component {
             about_code: about_code,
             message: 'new order',
         };
-        axios.post('http://localhost:5002/message', payload);
+        axios.post('http://18.141.88.73:5002/', payload);
 
 
     }
@@ -185,6 +185,8 @@ class HomeView extends Component {
             if (this.state.menutype_list.length > 0) {
                 this.getMenuByCode(this.state.menutype_list[0].menu_type_id)
             }
+        }else{
+            this.props.history.push('/login_customer/')
         }
     }
 

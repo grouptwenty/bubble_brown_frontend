@@ -91,7 +91,64 @@ class loginView extends Component {
 
 
     };
+    Authfacebook = () => {
+        OAuth.initialize("HBPP7MOsssNFYnKdbu9qyPT0Fyo");
+        OAuth.popup("facebook")
+            .done(async res => {
+                var info
+              await res.me().then(( data) => {
+                info = data;
+                  });
+            
+                console.log("infooooooooooooooooo", info);
 
+                const max_code = await customer_model.getCustomerMaxCode()
+                var customer_code = 'CM' + max_code.data.customer_code_max
+                // console.log("customer_code------------>", customer_code);
+                var customer_data = {
+                    customer_code: customer_code,
+                    customer_name: info.name,
+                    customer_id: info.id,
+                    customer_email:info.email,
+                    customer_tel: '',
+                    customer_image: info.avatar
+
+                }
+
+                var check_Id = await customer_model.getCustomerById(info)
+                console.log("check_Id------------>", check_Id);
+                if (check_Id.data != undefined && check_Id.data != null) {
+
+                    var customer_data = {
+                        customer_code: check_Id.data.customer_code,
+                        customer_name: info.name,
+                        customer_id: info.id,
+                        customer_email: info.email,
+                        customer_tel: '',
+                        customer_image: info.avatar
+
+                    }
+
+                    localStorage.setItem('@customer_data', JSON.stringify(check_Id.data))
+                    var update_customer = await customer_model.updateCustomerByCode(customer_data)
+                   
+                    this.props.history.push('/profile/')
+                    window.location.reload();
+                 
+                } else {
+                    var insert_customer = await customer_model.insertCustomer(customer_data)
+                    localStorage.setItem('@customer_data', JSON.stringify(customer_data))
+               
+                    this.props.history.push('/profile/')
+                    window.location.reload();
+                   
+                }
+            })
+            .fail(err => {
+            });
+
+
+    };
     renderLineButtonPage() {
         var login_or_profile = []
         if (this.state.customer_data != undefined) {
@@ -105,7 +162,7 @@ class loginView extends Component {
                 <div>
                     <Button style={{ backgroundColor: '#00B900', color: '#fff' ,height:'60px'}} onClick={this.Auth}
                         className="btn btn-tw btn-block">
-                        เข้าสู่ะบบด้วย Line
+                        เข้าสู่ระบบด้วย Line
                     </Button>
                 </div>
             )
@@ -124,19 +181,11 @@ class loginView extends Component {
         } else {
             login_or_profile.push(
                 <div>
-                    <FacebookLogin
-                        style={{ backgroundColor: '#4267b2', color: 'white', borderRadius: '5px', width: '100%', height: '20px', borderWidth: '0' }}
-                        appId="1021322851547683"
-                        autoLoad={false}
-                        fields="name,email,picture"
-                        callback={this.responseFacebook.bind(this)}
-                        // cssClass="my-facebook-button-class"
-                        // icon="fa-facebook"
-                       
-                    />
-
-
-                </div>
+                <Button style={{ backgroundColor: '#4267b2', color: '#fff' ,height:'60px'}} onClick={this.Authfacebook}
+                    className="btn btn-tw btn-block">
+                    เข้าสู่ระบบด้วย FACEBOOK
+                </Button>
+            </div>
             )
         } return login_or_profile;
     }

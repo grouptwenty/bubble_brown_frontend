@@ -11,12 +11,12 @@ export default {
 	// URL_IMG: 'http://18.140.54.123:3003/',
 
 	
-	URL: 'http://54.169.155.89/:3004',
+	URL: 'http://18.141.88.73:3004',
 	// IO: 'http://localhost:3002',
-	URL_UPLOAD_IMG: 'http://54.169.155.89:3005/upload-image/',
-	URL_DELETE_IMG: 'http://54.169.155.89:3005/delete-image/',
-	URL_IMG: 'http://54.169.155.89:3006/',
-	URL_PUSHER: 'http://54.169.155.89:5002/',
+	URL_UPLOAD_IMG: 'http://18.141.88.73:3005/upload-image/',
+	URL_DELETE_IMG: 'http://18.141.88.73:3005/delete-image/',
+	URL_IMG: 'http://18.141.88.73:3006/',
+	URL_PUSHER: 'http://18.141.88.73:5002/',
 
 	// URL: 'http://192.168.1.113:3004',
 	// // IO: 'http://localhost:3002',
